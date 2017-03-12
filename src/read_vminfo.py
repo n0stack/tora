@@ -4,24 +4,14 @@ import libvirt
 import os
 import re
 from xml.dom import minidom
-
+from .Base import BaseFunc
 QEMU_URL = "qemu:///system"
 
-class VMInfo:
+
+class VMInfo(BaseFunc):
 
     def __init__(self):
-        self.connect_to_qemu()
-
-
-    def connect_to_qemu(self):
-        self.connection = libvirt.openReadOnly(QEMU_URL)
-
-        if self.connection == None:
-            print ("Failed to connect to the hypervisor")
-            sys.exit(1)
-
-        print ("Success to connect to the hypervisor")
-
+        super().__init__()
 
 
     # Show all domain's all information(id,name,state...)
