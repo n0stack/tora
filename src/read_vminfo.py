@@ -23,10 +23,6 @@ class VMInfo:
         print ("Success to connect to the hypervisor")
 
 
-    def show_domain_all(self):
-        domains = self.connection.listDefinedDomains()
-        print (domains)
-
 
     # Show all domain's all information(id,name,state...)
     def show_domain_info_all(self):
