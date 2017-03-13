@@ -1,15 +1,14 @@
 # coding:UTF-8
-
 import libvirt
 import os
 import re
 from xml.dom import minidom
-from Base import BaseFunc
-QEMU_URL = "qemu:///system"
+from Base import BaseReadOnly
 
 
-class VMInfo(BaseFunc):
-
+class InfoAPI(BaseReadOnly):
+    """Show VM or network's information"""
+    
     def __init__(self):
         super().__init__()
 
@@ -66,5 +65,5 @@ class VMInfo(BaseFunc):
 
 
 # for debug
-vm = VMInfo()
-vm.show_domain_info_all()
+api = InfoAPI()
+api.show_domain_info_all()
