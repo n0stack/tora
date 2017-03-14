@@ -20,7 +20,7 @@ class DomainInfo(BaseReadOnly):
         if iface_type == "network":
             network_info = iface.getElementsByTagName("source")[0].getAttribute("network")
             net_XML_info = minidom.parseString(Conn.networkLookupByName(network_info).XMLDesc(0))
-            bridge = net_XML_info.getElementsByTagName("bridge")[ 0 ].getAttribute("name")
+            bridge = net_XML_info.getElementsByTagName("bridge")[0].getAttribute("name")
             mac_address = ""
             device = ""
 
@@ -35,7 +35,21 @@ class DomainInfo(BaseReadOnly):
         print ("Bridge = {}".format(bridge))
         print ("Mac address = {}".format(mac_address))
         print ("Network information = {}".format(network_info))
-        
+
+    def get_bridge_info(self, iface):
+        iface_type = iface.getAttribute("type")
+        if iface_type == "network":
+            net_XML_info = minidom.parseString(Conn.networkLookupByName(network_info).XMLDesc(0))
+            bridge = net_XML_info.getElementsByTagName("bridge")[0].getAttribute("name")
+
+        elif iface_type == "bridge":
+            bridge = iface.getElementsByTagName("source")[0].getAttribute("bridge")
+
+        else:
+            bridge = None
+
+        return bridge
+
 
     # Show all domain's all information(id,name,state...)
     def show_domain_info_all(self):
