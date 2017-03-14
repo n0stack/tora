@@ -15,16 +15,15 @@ class DomainInfo(BaseReadOnly):
 
     # get interface's information
     def get_domain_network_info(self, iface):
-        
         print ("*"*20)
-        print ("Network device = {}".format(device))
-        print ("Bridge = {}".format(bridge))
-        print ("Mac address = {}".format(mac_address))
-        print ("Network information = {}".format(network_info))
+        print ("Network = {}".format(self.get_network()))
+        print ("Bridge = {}".format(self.get_bridge()))
+        print ("Mac address = {}".format(self.get_mac()))
+        print ("Device = {}".format(self.get_device()))
 
 
     # Bridge interface's name
-    def get_bridge_info(self, iface):
+    def get_bridge(self, iface):
         iface_type = iface.getAttribute("type")
         if iface_type == "network":
             net_XML_info = minidom.parseString(Conn.networkLookupByName(network_info).XMLDesc(0))
@@ -39,7 +38,7 @@ class DomainInfo(BaseReadOnly):
         return bridge
 
     # Network name
-    def get_network_info(self, iface):
+    def get_network(self, iface):
         iface_type = iface.getAttribute("type")
         if iface_type == "network":
             network = iface.getElementsByTagName("source")[0].getAttribute("network")
@@ -49,7 +48,7 @@ class DomainInfo(BaseReadOnly):
         return network
 
     # Mac address
-    def get_mac_info(self, iface):
+    def get_mac(self, iface):
         return iface.getElementsByTagName("mac")[0].getAttribute("address")
 
     # Device(nic) name
