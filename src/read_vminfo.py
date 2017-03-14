@@ -6,7 +6,7 @@ from xml.dom import minidom
 from Base import BaseReadOnly
 
 
-class InfoAPI(BaseReadOnly):
+class DomainInfo(BaseReadOnly):
     """Show VM or network's information"""
     
     def __init__(self):
