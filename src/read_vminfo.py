@@ -73,7 +73,11 @@ class DomainInfo(BaseReadOnly):
         domain = self.connection.lookupByID(id)
         return domain.info[2]
 
-    
+
+    def get_domain_XML(self, id):
+        domain = self.connection.lookupByID(id)
+        return minidom.parseString(domain.XMLDesc(id))
+
 
     # for debug
     def show_domain_info_all(self):
@@ -88,7 +92,7 @@ class DomainInfo(BaseReadOnly):
             print ("CPU time = {}".format(self.get_CPU_time(id)))
 
             # Read XML file
-            domain_XML = minidom.parseString(domain.XMLDesc(0))
+            domain_XML = get_domain_XML(id)
 
             # Show interface's information
             for iface in domain_XML.getElementsByTagName("interface"):
