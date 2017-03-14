@@ -15,27 +15,15 @@ class DomainInfo(BaseReadOnly):
 
     # get interface's information
     def get_domain_network_info(self, iface):
-        iface_type = iface.getAttribute("type")
         
-        if iface_type == "network":
-            network_info = iface.getElementsByTagName("source")[0].getAttribute("network")
-            net_XML_info = minidom.parseString(Conn.networkLookupByName(network_info).XMLDesc(0))
-            bridge = net_XML_info.getElementsByTagName("bridge")[0].getAttribute("name")
-            mac_address = ""
-            device = ""
-
-        elif iface_type == "bridge":
-            network_info = ""
-            bridge = iface.getElementsByTagName("source")[0].getAttribute("bridge")
-            mac_address = iface.getElementsByTagName("mac")[0].getAttribute("address")
-            device = iface.getElementsByTagName("target")[0].getAttribute("dev")
-            
         print ("*"*20)
         print ("Network device = {}".format(device))
         print ("Bridge = {}".format(bridge))
         print ("Mac address = {}".format(mac_address))
         print ("Network information = {}".format(network_info))
 
+
+    # Bridge interface's name
     def get_bridge_info(self, iface):
         iface_type = iface.getAttribute("type")
         if iface_type == "network":
@@ -49,6 +37,27 @@ class DomainInfo(BaseReadOnly):
             bridge = None
 
         return bridge
+
+    # Network name
+    def get_network_info(self, iface):
+        iface_type = iface.getAttribute("type")
+        if iface_type == "network":
+            network = iface.getElementsByTagName("source")[0].getAttribute("network")
+        else:
+            network = None
+
+        return network
+
+    # Mac address
+    def get_mac_info(self, iface):
+        return iface.getElementsByTagName("mac")[0].getAttribute("address")
+
+    # Device(nic) name
+    def get_device(self, iface):
+        return iface.getElementsByTagName("target")[0].getAttribute("dev")
+
+
+
 
 
     # Show all domain's all information(id,name,state...)
