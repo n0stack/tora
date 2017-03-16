@@ -13,8 +13,6 @@ class DomainInfo(BaseReadOnly):
         super().__init__()
 
 
-
-
     # Bridge interface's name
     def get_bridge(self, iface):
         iface_type = iface.getAttribute("type")
@@ -48,35 +46,36 @@ class DomainInfo(BaseReadOnly):
     def get_device(self, iface):
         return iface.getElementsByTagName("target")[0].getAttribute("dev")
 
-
+    # Domain(VM) name
     def get_domain(self, id):
         domain = self.connection.lookupByID(id)
         return domain.name()
 
-
+    # VM tatus
     def get_state(self, id):
         domain = self.connection.lookupByID(id)
-        return domain.info[0]
+        return domain.info()[0]
 
 
+    # VM max memory
     def get_max_memory(self, id):
         domain = self.connection.lookupByID(id)
-        return domain.info[1]
+        return domain.info()[1]
 
-
+    # Number of CPU
     def get_CPU_number(self, id):
         domain = self.connection.lookupByID(id)
-        return domain.info[3]
+        return domain.info()[3]
 
-
+    # CPU time
     def get_CPU_time(self, id):
         domain = self.connection.lookupByID(id)
-        return domain.info[2]
+        return domain.info()[2]
 
-
+    # Domain's XML(settings)
     def get_domain_XML(self, id):
         domain = self.connection.lookupByID(id)
-        return minidom.parseString(domain.XMLDesc(id))
+        return minidom.parseString(domain.XMLDesc(0))
 
 
     # for debug
@@ -90,10 +89,10 @@ class DomainInfo(BaseReadOnly):
             print ("Max Memory = {}MB".format(self.get_max_memory(id)))
             print ("Number of CPUs = {}".format(self.get_CPU_number(id)))
             print ("CPU time = {}".format(self.get_CPU_time(id)))
-
+            
             # Read XML file
-            domain_XML = get_domain_XML(id)
-
+            domain_XML = self.get_domain_XML(id)
+            
             # Show interface's information
             for iface in domain_XML.getElementsByTagName("interface"):
                 self.get_domain_network_info(iface)
@@ -113,5 +112,5 @@ class DomainInfo(BaseReadOnly):
 
 
 # for debug
-api = InfoAPI()
+api = DomainInfo()
 api.show_domain_info_all()
