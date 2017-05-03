@@ -7,7 +7,9 @@ from Base import BaseReadOnly
 
 
 class DomainInfo(BaseReadOnly):
-    """Show VM's information"""
+    """
+    Show VM's information
+    """
     
     def __init__(self):
         super().__init__()
@@ -88,9 +90,9 @@ class DomainInfo(BaseReadOnly):
 
     # for debug
     def show_domain_info_all(self):
+        
         for id in self.connection.listDomainsID():
-            print ("-"*30)
-
+            
             print ("ID = {}".format(id))
             print ("Name = {}".format(self.get_domain(id)))
             print ("State = {}".format(self.get_state(id)))
