@@ -112,7 +112,7 @@ class DomainInfo(BaseReadOnly):
 
             domain.append(_information)
 
-        return json.dumps(domain)
+        return domain
 
 
     # for debug
@@ -128,4 +128,4 @@ class DomainInfo(BaseReadOnly):
 
 # for debug
 api = DomainInfo()
-print (api.show_domain_info_all())
+print (json.dumps(api.show_domain_info_all()))
