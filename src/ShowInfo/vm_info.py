@@ -29,7 +29,7 @@ class DomainInfo(BaseReadOnly):
         else:
             bridge = None
 
-        return bridge
+        return {"bridge": bridge}
 
 
     # Network name
@@ -41,50 +41,50 @@ class DomainInfo(BaseReadOnly):
         else:
             network = None
 
-        return network
+        return {"network": network}
 
 
     # Mac address
     def get_mac(self, iface):
-        return iface.getElementsByTagName("mac")[0].getAttribute("address")
+        return {"mac_address": iface.getElementsByTagName("mac")[0].getAttribute("address")}
 
 
     # Device(nic) name
     def get_device(self, iface):
-        return iface.getElementsByTagName("target")[0].getAttribute("dev")
+        return {"device": iface.getElementsByTagName("target")[0].getAttribute("dev")}
 
 
     # Domain(VM) name
     def get_domain(self, id):
         domain = self.connection.lookupByID(id)
-        return domain.name()
+        return {"name": domain.name()}
 
 
     # VM tatus
     def get_state(self, id):
         domain = self.connection.lookupByID(id)
-        return domain.info()[0]
+        return {"state": domain.info()[0]}
 
 
     # VM max memory
     def get_max_memory(self, id):
         domain = self.connection.lookupByID(id)
-        return domain.info()[1]
+        return {"max_memory": domain.info()[1]}
 
 
     # Number of CPU
     def get_CPU_number(self, id):
         domain = self.connection.lookupByID(id)
-        return domain.info()[3]
+        return {"number_of_CPU": domain.info()[3]}
 
 
     # CPU time
     def get_CPU_time(self, id):
         domain = self.connection.lookupByID(id)
-        return domain.info()[2]
+        return {"CPU_time": domain.info()[2]}
 
 
-    # Domain's XML(settings)
+    # Domain's XML(for settings)
     def get_domain_XML(self, id):
         domain = self.connection.lookupByID(id)
         return minidom.parseString(domain.XMLDesc(0))
@@ -95,12 +95,12 @@ class DomainInfo(BaseReadOnly):
         domain = []
         for id in self.connection.listDomainsID():
             
-            _information = {"id": id,
-                            "name": self.get_domain(id),
-                            "state": self.get_state(id),
-                            "max_memory": self.get_max_memory(id),
-                            "number_of_CPU": self.get_CPU_number(id),
-                            "CPU_time": self.get_CPU_time(id)}
+            _information = {"id": id}
+            _information.update(self.get_domain(id))
+            _information.update(self.get_state(id))
+            _information.update(self.get_max_memory(id))
+            _information.update(self.get_CPU_number(id))
+            _information.update(self.get_CPU_time(id))
             
             # Read XML file
             domain_XML = self.get_domain_XML(id)
@@ -117,11 +117,11 @@ class DomainInfo(BaseReadOnly):
 
     # for debug
     def get_domain_network_info(self, iface):
-        network_info = {"interface_type": iface.getAttribute('type'),
-                        "network": self.get_network(iface),
-                        "bridge": self.get_bridge(iface),
-                        "mac_address": self.get_mac(iface),
-                        "device": self.get_device(iface)}
+        network_info = {"interface_type": iface.getAttribute('type')}
+        network_info.update(self.get_network(iface))
+        network_info.update(self.get_bridge(iface))
+        network_info.update(self.get_mac(iface))
+        network_info.update(self.get_device(iface))
 
         return network_info
 
