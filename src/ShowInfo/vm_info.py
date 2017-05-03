@@ -5,7 +5,7 @@ import re
 import pprint
 import json
 from xml.dom import minidom
-from Base import BaseReadOnly
+from KVMConnect.Base import BaseReadOnly
 
 
 class DomainInfo(BaseReadOnly):
@@ -115,7 +115,7 @@ class DomainInfo(BaseReadOnly):
         return domain
 
 
-    # for debug
+    # Get network information
     def get_domain_network_info(self, iface):
         network_info = {"interface_type": iface.getAttribute('type')}
         network_info.update(self.get_network(iface))
@@ -126,6 +126,3 @@ class DomainInfo(BaseReadOnly):
         return network_info
 
 
-# for debug
-api = DomainInfo()
-print (json.dumps(api.show_domain_info_all()))
