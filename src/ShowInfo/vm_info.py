@@ -2,6 +2,8 @@
 import libvirt
 import os
 import re
+import pprint
+import json
 from xml.dom import minidom
 from Base import BaseReadOnly
 
@@ -88,38 +90,42 @@ class DomainInfo(BaseReadOnly):
         return minidom.parseString(domain.XMLDesc(0))
 
 
-    # for debug
+    # All information
     def show_domain_info_all(self):
-        
+        domain = []
         for id in self.connection.listDomainsID():
             
-            print ("ID = {}".format(id))
-            print ("Name = {}".format(self.get_domain(id)))
-            print ("State = {}".format(self.get_state(id)))
-            print ("Max Memory = {}MB".format(self.get_max_memory(id)))
-            print ("Number of CPUs = {}".format(self.get_CPU_number(id)))
-            print ("CPU time = {}".format(self.get_CPU_time(id)))
+            _information = {"id": id,
+                            "name": self.get_domain(id),
+                            "state": self.get_state(id),
+                            "max_memory": self.get_max_memory(id),
+                            "number_of_CPU": self.get_CPU_number(id),
+                            "CPU_time": self.get_CPU_time(id)}
             
             # Read XML file
             domain_XML = self.get_domain_XML(id)
-            
+            _interfaces = []
             # Show interface's information
             for iface in domain_XML.getElementsByTagName("interface"):
-                self.get_domain_network_info(iface)
+                _interfaces.append(self.get_domain_network_info(iface))
+            _information.update({"interfaces": _interfaces})
 
-            print ("*"*20)
-        print ("-"*30)                
+            domain.append(_information)
+
+        return json.dumps(domain)
 
 
     # for debug
     def get_domain_network_info(self, iface):
-        print ("*"*20)
-        print ("Network = {}".format(self.get_network(iface)))
-        print ("Bridge = {}".format(self.get_bridge(iface)))
-        print ("Mac address = {}".format(self.get_mac(iface)))
-        print ("Device = {}".format(self.get_device(iface)))
+        network_info = {"interface_type": iface.getAttribute('type'),
+                        "network": self.get_network(iface),
+                        "bridge": self.get_bridge(iface),
+                        "mac_address": self.get_mac(iface),
+                        "device": self.get_device(iface)}
+
+        return network_info
 
 
 # for debug
 api = DomainInfo()
-api.show_domain_info_all()
+print (api.show_domain_info_all())
