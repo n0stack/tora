@@ -2,7 +2,6 @@
 import libvirt
 import os
 import re
-import pprint
 import json
 from xml.dom import minidom
 from KVMConnect.Base import BaseReadOnly
