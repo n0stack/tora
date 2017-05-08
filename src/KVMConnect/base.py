@@ -12,25 +12,21 @@ class BaseReadOnly:
         self.QEMU_URL = "qemu:///system"
         self.connect_to_qemu()
 
-
     def connect_to_qemu(self):
         self.connection = libvirt.openReadOnly(self.QEMU_URL)
-        if self.connection == None:
-            print ("Failed to connect to the hypervisor.")
+        if self.connection is None:
+            print("Failed to connect to the hypervisor.")
             sys.exit(1)
 
-        
+
 class BaseOpen:
-    
+
     def __init__(self):
         self.QEMU_URL = "qemu:///system"
         self.connect_to_qemu()
 
-
     def connect_to_qemu(self):
         self.connection = libvirt.open(self.QEMU_URL)
-        if self.connection == None:
-            print ("Failed to connect to the hypervisor.")
+        if self.connection is None:
+            print("Failed to connect to the hypervisor.")
             sys.exit(1)
-
-
