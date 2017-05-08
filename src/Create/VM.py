@@ -48,6 +48,7 @@ class CreateVM(BaseOpen):
         domain = Element('domain', attrib={'type':'qemu'})
 
 
+        # os tag
         self.create_os_tag()
 
 
