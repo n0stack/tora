@@ -1,5 +1,6 @@
 import random
 
+
 def randomUUID():
     u = [random.randint(0, 255) for ignore in range(0, 16)]
     u[6] = (u[6] & 0x0F) | (4 << 4)
