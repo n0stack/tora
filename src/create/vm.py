@@ -3,7 +3,7 @@ import xml.etree.ElementTree as ET
 import uuid
 import libvirt
 from create import utils
-from kvmonnect.base import BaseOpen
+from kvmconnect.base import BaseOpen
 
 
 class CreateVM(BaseOpen):
@@ -14,24 +14,10 @@ class CreateVM(BaseOpen):
     def __init__(self):
         super().__init__()
 
-    def create_os_tag(self):
-        self.os = Element('os')
-
-        # Decide arch
-        type = Element('type', attrib={'arch': 'x86_64'})
-        type.text = 'hvm'
-
-        boot1 = Element('boot', attrib={'dev': 'cdrom'})
-        boot2 = Element('boot', attrib={'dev': 'hd'})
-
-        self.os.append(type)
-        self.os.append(boot1)
-        self.os.append(boot2)
-
-    def create_vm(self):
+    def create_vm(self, name):
         boot = "cent1.img"
         cdrom = "/home/palloc/iso_file/CentOS-7-x86_64-Minimal-1611.iso"
-        vm_name = "cent1"
+        vm_name = name
 
         # Check the existence of VM
         try:
@@ -90,6 +76,20 @@ class CreateVM(BaseOpen):
         # dom = self.connection.createXML(xml, 0)
         # dom = self.connection.defineXML(xml)
 
+    def create_os_tag(self):
+        self.os = Element('os')
+
+        # Decide arch
+        type = Element('type', attrib={'arch': 'x86_64'})
+        type.text = 'hvm'
+
+        boot1 = Element('boot', attrib={'dev': 'cdrom'})
+        boot2 = Element('boot', attrib={'dev': 'hd'})
+
+        self.os.append(type)
+        self.os.append(boot1)
+        self.os.append(boot2)
+
     def create_devices(self, boot, cdrom):
         self.devices = Element('devices')
 
@@ -99,7 +99,6 @@ class CreateVM(BaseOpen):
 
         # disk1 tag
         disk1 = Element('disk', attrib={'type': 'file', 'device': 'disk'})
-
         driver = Element('driver', attrib={'name': 'qemu', 'type': 'qcow2'})
         source = Element('source', attrib={'file': boot})
         target = Element('target', attrib={'dev': 'vda', 'bus': 'virtio'})
