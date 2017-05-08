@@ -13,7 +13,8 @@ class CreateVM(BaseOpen):
     def __init__(self):
         super().__init__()
 
-    def getXML(self):
+
+    def create_os_tag(self):
         self.os = Element('os')
 
         # Decide arch
@@ -34,12 +35,20 @@ class CreateVM(BaseOpen):
         vm_name = "cent1"
 
 
-        self.getXML()
-        #vm = self.connection.lookupByName(vm_name)
-
+        # Check the existence of VM
+        try:
+            vm = self.connection.lookupByName(vm_name)
+        except libvirt.libvirtError:
+            pass
+        if vm is not None:
+            return None
+        
 
         # domain tag
         domain = Element('domain', attrib={'type':'qemu'})
+
+
+        self.create_os_tag()
 
 
         # name tag
