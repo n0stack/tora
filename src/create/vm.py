@@ -1,8 +1,9 @@
 from xml.etree.ElementTree import Element, SubElement
 import xml.etree.ElementTree as ET
 import uuid
-from Create import utils
-from KVMConnect.Base import BaseOpen
+import libvirt
+from create import utils
+from kvmonnect.base import BaseOpen
 
 
 class CreateVM(BaseOpen):
@@ -35,10 +36,11 @@ class CreateVM(BaseOpen):
         # Check the existence of VM
         try:
             vm = self.connection.lookupByName(vm_name)
+            if vm is not None:
+                return None
+
         except libvirt.libvirtError:
             pass
-        if vm is not None:
-            return None
 
         # domain tag
         domain = Element('domain', attrib={'type': 'qemu'})
@@ -70,8 +72,10 @@ class CreateVM(BaseOpen):
         vcpu = Element('vcpu', attrib={'placement': 'static'})
         vcpu.text = "1"
 
-        # Create XML file and append some tags
+        # devices tag
         self.create_devices(boot, cdrom)
+
+        # Create XML file and append some tags
         domain.append(name)
         domain.append(uuid)
         domain.append(description)
@@ -83,8 +87,8 @@ class CreateVM(BaseOpen):
 
         xml = ET.tostring(domain).decode('utf-8').replace('\n', '')
         print(xml)
-        dom = self.connection.createXML(xml, 0)
-        dom = self.connection.defineXML(xml)
+        # dom = self.connection.createXML(xml, 0)
+        # dom = self.connection.defineXML(xml)
 
     def create_devices(self, boot, cdrom):
         self.devices = Element('devices')

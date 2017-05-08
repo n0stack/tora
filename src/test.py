@@ -1,4 +1,4 @@
-from Create.VM import CreateVM
+from create.vm import CreateVM
 
 test = CreateVM()
 test.create_vm()

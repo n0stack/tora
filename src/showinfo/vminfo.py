@@ -4,7 +4,7 @@ import os
 import re
 import json
 from xml.dom import minidom
-from KVMConnect.base import BaseReadOnly
+from kvmconnect.base import BaseReadOnly
 
 
 class DomainInfo(BaseReadOnly):

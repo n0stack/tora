@@ -1,5 +1,5 @@
 # coding:UTF-8
-from ShowInfo.vm_info import DomainInfo
+from showinfo.vminfo import DomainInfo
 import json
 
 test = DomainInfo()
