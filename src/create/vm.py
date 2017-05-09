@@ -16,12 +16,11 @@ class CreateVM(BaseOpen):
 
     def create_vm(self, name):
         boot = "cent1.img"
-        cdrom = "/home/palloc/iso_file/CentOS-7-x86_64-Minimal-1611.iso"
-        vm_name = name
+        self.vm_name = name
 
         # Check the existence of VM
         try:
-            vm = self.connection.lookupByName(vm_name)
+            vm = self.connection.lookupByName(self.vm_name)
             if vm is not None:
                 return None
 
@@ -36,7 +35,7 @@ class CreateVM(BaseOpen):
 
         # name tag
         name = Element('name')
-        name.text = vm_name
+        name.text = self.vm_name
 
         # uuid tag
         uuid = Element('uuid')
@@ -59,7 +58,7 @@ class CreateVM(BaseOpen):
         vcpu.text = "1"
 
         # devices tag
-        self.create_devices(boot, cdrom)
+        self.create_devices(boot)
 
         # Create XML file and append some tags
         domain.append(name)
@@ -90,7 +89,7 @@ class CreateVM(BaseOpen):
         self.os.append(boot1)
         self.os.append(boot2)
 
-    def create_devices(self, boot, cdrom):
+    def create_devices(self, boot):
         self.devices = Element('devices')
 
         # emulator tag
