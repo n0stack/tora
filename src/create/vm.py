@@ -75,8 +75,12 @@ class CreateVM(BaseOpen):
 
         xml = ET.tostring(domain).decode('utf-8').replace('\n', '')
         print(xml)
-        # dom = self.connection.createXML(xml, 0)
-        # dom = self.connection.defineXML(xml)
+        dom = self.connection.createXML(xml, 0)
+        dom = self.connection.defineXML(xml)
+
+        if not dom:
+            print("Cannot create/define domain")
+
 
 
 
@@ -99,7 +103,7 @@ class CreateVM(BaseOpen):
 
         # emulator tag
         self.emulator = Element('emulator')
-        self.emulator.text = "/usr/bin/qemu-system"
+        self.emulator.text = "/usr/bin/qemu-system-x86_64"
 
         # disk1 tag
         self.create_qcow2_tag()
