@@ -14,9 +14,11 @@ class CreateVM(BaseOpen):
     def __init__(self):
         super().__init__()
 
-    def create_vm(self, name):
-        boot = "cent1.img"
+    def __call__(self, name, boot, cdrom, memory):
         self.vm_name = name
+        self.boot = boot
+        self.cdrom = cdrom
+        self.memory = memory 
 
         # Check the existence of VM
         try:
@@ -58,7 +60,7 @@ class CreateVM(BaseOpen):
         vcpu.text = "1"
 
         # devices tag
-        self.create_devices(boot)
+        self.create_devices_tag()
 
         # Create XML file and append some tags
         domain.append(name)
@@ -89,7 +91,7 @@ class CreateVM(BaseOpen):
         self.os.append(boot1)
         self.os.append(boot2)
 
-    def create_devices(self, boot):
+    def create_devices_tag(self):
         self.devices = Element('devices')
 
         # emulator tag
@@ -99,7 +101,7 @@ class CreateVM(BaseOpen):
         # disk1 tag
         disk1 = Element('disk', attrib={'type': 'file', 'device': 'disk'})
         driver = Element('driver', attrib={'name': 'qemu', 'type': 'qcow2'})
-        source = Element('source', attrib={'file': boot})
+        source = Element('source', attrib={'file': self.boot})
         target = Element('target', attrib={'dev': 'vda', 'bus': 'virtio'})
         address = Element('address', attrib={'type': 'pci',
                                              'domain': '0x0000',
@@ -111,6 +113,23 @@ class CreateVM(BaseOpen):
         disk1.append(target)
         disk1.append(address)
 
+        # disk2 tag(cdrom)
+        disk2 = Element('disk', attrib={'type': 'file', 'device': 'cdrom'})
+        driver = Element('driver', attrib={'name':'qemu', 'type': 'raw'})
+        source = Element('source', attrib={'file': self.cdrom})
+        target = Element('target', attrib={'bus': 'ide', 'dev': 'hdb'})
+        read_only = Element('readonly')
+        address = Element('address', attrib={'bus': '0',
+                                             'controller': '0',
+                                             'target': '0',
+                                             'type': 'drive',
+                                             'unit': '1'})
+        disk2.append(driver)
+        disk2.append(source)
+        disk2.append(target)
+        disk2.append(read_only)
+        disk2.append(address)
+                                                        
         # controller1 tag
         controller1 = Element('controller', attrib={'type': 'usb',
                                                     'index': '0',
@@ -189,6 +208,7 @@ class CreateVM(BaseOpen):
 
         self.devices.append(emulator)
         self.devices.append(disk1)
+        self.devices.append(disk2)
         self.devices.append(controller1)
         self.devices.append(controller2)
         self.devices.append(interface1)
