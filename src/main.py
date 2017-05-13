@@ -2,6 +2,7 @@
 from showinfo.vminfo import DomainInfo
 from showinfo.storageinfo import StorageInfo
 from create.vm import CreateVM
+from create.storage import CreateStorage
 import json
 import os
 
@@ -11,5 +12,8 @@ import os
 #test = DomainInfo()
 #print(json.dumps(test.show_domain_info_all()))
 
-test = StorageInfo()
-print(json.dumps(test.show_storage_info_all()))
+#test = StorageInfo()
+#print(json.dumps(test.show_storage_info_all()))
+
+test = CreateStorage()
+test("test", 500000, "/home/palloc/iso_file/")

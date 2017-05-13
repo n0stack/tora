@@ -1,5 +1,5 @@
 # coding: UTF-8
-from sml.etree.ElementTree import Element, SubElement
+from xml.etree.ElementTree import Element, SubElement
 import xml.etree.ElementTree as ET
 import uuid
 import libvirt
@@ -15,27 +15,53 @@ class CreateStorage(BaseOpen):
     def __init__(self):
         super().__init__()
 
-    def __call__(self):
-        xmlDesc = """
-        <pool type='dir'>
-        <name>mypool</name>
-        <uuid>1111</uuid>
-        <capacity unit='bytes'>1930</capacity>
-        <allocation unit='bytes'>1000</allocation>
-        <available unit='bytes'>930</available>
-        <source>
-        </source>
-        <target>
-        <path>/home/aiueo/images</path>
-        <permissions>
-        <mode>0755</mode>
-        <owner>-1</owner>
-        <group>-1</group>
-        </permissions>
-        </target>
-        </pool>"""
+    def __call__(self, pool_name, pool_size, pool_path):
+        
+        pool = Element('pool', attrib={'type': 'dir'})
+        name = Element('name')
+        name.text = pool_name
 
+        uuid = Element('uuid')
+        uuid.text = utils.randomUUID()
+
+        capacity = Element('capacity', attrib={'unit': 'bytes'})
+        capacity.text = str(pool_size)
+        allocation = Element('allocation', attrib={'unit': 'bytes'})
+        allocation.text = '0'
+        available = Element('allocation', attrib={'unit': 'bytes'})
+        available.text = str(int(capacity.text) - int(allocation.text))
+        
+        source = Element('source')
+        target = Element('target')
+        path = Element('path')
+        path.text = pool_path
+
+        permissions = Element('permission')
+        mode = Element('mode')
+        mode.text = '0755'
+        owner = Element('owner')
+        owner.text = '-1'
+        group = Element('group')
+        group.text = '-1'
+
+        permissions.append(mode)
+        permissions.append(owner)
+        permissions.append(group)
+                
+        target.append(path)
+        target.append(permissions)
+
+        pool.append(name)
+        pool.append(uuid)
+        pool.append(capacity)
+        pool.append(allocation)
+        pool.append(available)
+        pool.append(source)
+        pool.append(target)
+
+        xml = ET.tostring(pool).decode('utf-8').replace('\n', '')
+        print(xml)
         # create pool
-        pool = self.connection.storagePoolCreateXML(xmlDesc, 0)
+        #pool_success = self.connection.storagePoolCreateXML(xml, 0)
         
         
