@@ -17,22 +17,21 @@ class StorageInfo(BaseReadOnly):
         storage = []
         
         pools = self.connection.listAllStoragePools(0)
-
-        for pool in pools:
-            info = pool.info()
-            print('##############################')
-            print('pool name: ' + pool.name())
-            print('uuid: ' + pool.UUIDString())
-            print('Autostart: '+str(pool.autostart()))
-            print('Is active: '+str(pool.isActive()))
-            print('Is persistent: '+str(pool.isPersistent()))
-            print('Num volumes: '+str(pool.numOfVolumes()))
-            print('Pool state: '+str(info[0]))
-            print('Capacity: '+str(info[1]))
-            print('Allocation: '+str(info[2]))
-            print('Available: '+str(info[3]))
-            volumes = pool.listVolumes()
-            print(volumes)
-
-            
         
+        for pool in pools:
+            pool_info = {}
+            info = pool.info()
+            pool_info.update({'name': pool.name()})
+            pool_info.update({'uuid': pool.UUIDString()})
+            pool_info.update({'Autostart': pool.autostart()})
+            pool_info.update({'state': info[0]})
+            pool_info.update({'capacity': info[1]})
+            pool_info.update({'allocation': info[2]})
+            pool_info.update({'available': info[3]})
+            pool_info.update({'is_active': pool.isActive()})
+            pool_info.update({'is_persistent': pool.isPersistent()})
+            pool_info.update({'volumes': pool.listVolumes()})
+            
+            storage.append(pool_info)
+            
+        print(storage)
