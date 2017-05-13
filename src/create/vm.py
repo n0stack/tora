@@ -1,3 +1,4 @@
+# coding: UTF-8
 from xml.etree.ElementTree import Element, SubElement
 import xml.etree.ElementTree as ET
 import uuid
