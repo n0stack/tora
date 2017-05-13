@@ -88,22 +88,22 @@ class DomainInfo(BaseReadOnly):
         domain = []
         for id in self.connection.listDomainsID():
 
-            _information = {"id": id}
-            _information.update(self.get_domain(id))
-            _information.update(self.get_state(id))
-            _information.update(self.get_max_memory(id))
-            _information.update(self.get_CPU_number(id))
-            _information.update(self.get_CPU_time(id))
+            dom_info = {"id": id}
+            dom_info.update(self.get_domain(id))
+            dom_info.update(self.get_state(id))
+            dom_info.update(self.get_max_memory(id))
+            dom_info.update(self.get_CPU_number(id))
+            dom_info.update(self.get_CPU_time(id))
 
             # Read XML file
             domain_XML = self.get_domain_XML(id)
-            _interfaces = []
+            interfaces = []
             # Show interface's information
             for iface in domain_XML.getElementsByTagName("interface"):
-                _interfaces.append(self.get_domain_network_info(iface))
-            _information.update({"interfaces": _interfaces})
+                interfaces.append(self.get_domain_network_info(iface))
+            dom_info.update({"interfaces": interfaces})
 
-            domain.append(_information)
+            domain.append(dom_info)
 
         return domain
 

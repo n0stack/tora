@@ -12,4 +12,4 @@ import os
 #print(json.dumps(test.show_domain_info_all()))
 
 test = StorageInfo()
-test.show_storage_info_all()
+print(json.dumps(test.show_storage_info_all()))
