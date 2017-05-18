@@ -83,6 +83,9 @@ class DomainInfo(BaseReadOnly):
         domain = self.connection.lookupByID(id)
         return minidom.parseString(domain.XMLDesc(0))
 
+    def get_domain_list(self):
+        return {"domain_list": self.connection.listDomainsID()}
+
     # All information
     def get_domain_info_all(self):
         domain = []

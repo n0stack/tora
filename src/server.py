@@ -12,21 +12,31 @@ from flask_restful import reqparse, abort, Api, Resource
 app = Flask(__name__)
 api = Api(app)
 
-
-def abort_if_vmid_doesnt_exist(id):
-    abort(404, message="{} doesn't exist".format(id))
+# Check 404
+def abort_if_vmid_doesnt_exist(data, id):
+    if id not in data.get_domain_list()['domain_list']:
+        abort(404, message="{} doesn't exist".format(id))
 
 
 class DomainInfoAll(Resource):
+    """
+    This api will return all domain's information
+    """
     def get(self):
         data = DomainInfo()
         return data.get_domain_info_all(), 200
 
         
 class Domain(Resource):
+    """
+    about vm operation
+    """
     def get(self, func_name, id):
         data = DomainInfo()
-        r_data = None
+
+        # Check existance of id
+        abort_if_vmid_doesnt_exist(data, id)
+
         if func_name == "state":
             r_data = data.get_state(id)
         elif func_name == "memory":
@@ -34,10 +44,7 @@ class Domain(Resource):
         elif func_name == "CPU":
             r_data = data.get_CPU_number(id)
 
-        if r_data is None:
-            abort_if_vmid_doesnt_exist(id)
-        else:
-            return r_data, 200
+        return r_data, 200
 
             
 api.add_resource(DomainInfoAll, '/vm')
@@ -49,15 +56,3 @@ if __name__ == '__main__':
 
 
 
-
-#create_test = CreateVM()
-#create_test("test2", os.getcwd()+"/img/cent2.img", os.getcwd()+"/iso/cent7-mini.iso", 524288, 1)
-
-#test = DomainInfo()
-#print(json.dumps(test.show_domain_info_all()))
-
-#test = StorageInfo()
-#print(json.dumps(test.show_storage_info_all()))
-
-test = CreateStorage()
-test("test", 500000, "/home/palloc/iso_file/")
