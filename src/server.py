@@ -22,9 +22,10 @@ class DomainInfoAll(Resource):
     """
     This api will return all domain's information
     """
-    def get(self):
+    def get(self, name):
         data = DomainInfo()
-        return data.get_domain_info_all(), 200
+        if name == "domain":
+            return data.get_domain_info_all(), 200
 
         
 class Domain(Resource):
@@ -43,16 +44,20 @@ class Domain(Resource):
             r_data = data.get_max_memory(id)
         elif func_name == "CPU":
             r_data = data.get_CPU_number(id)
-
+        
         return r_data, 200
 
+    def post(self, func_name, id):
+        
+
             
-api.add_resource(DomainInfoAll, '/vm')
+api.add_resource(DomainInfoAll, '/info/<name>')
 api.add_resource(Domain, '/vm/<func_name>/<int:id>')
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+
+    app.run(debug=True, host='0.0.0.0', port=5000)
 
 
 
