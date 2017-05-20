@@ -13,21 +13,27 @@ class VmOperation(BaseOpen):
     def start_vm(self, name):
         domain = self.connection.lookupByName(name)
         domain.create()
-        time.sleep(10)
 
-        if domain.info()[0] != "1":
-            return {"state": "failed"}
+        # Return failed if 60s spent.
+        s = time.time()
+        while True:
+            if domain.info()[0] == 1:
+                break
+            if time.time() - s > 120:
+                return {"state": "failed"}
+
         return {"state": "successful"}
 
     def stop_vm(self, name):
         domain = self.connection.lookupByName(name)
         domain.shutdown()
-        s = time.time()
+
         # Return failed if 60s spent.
+        s = time.time()
         while True:
-            if domain.info()[0] == "0":
+            if domain.info()[0] != 1:
                 break
-            if time.time() - s > 60:
+            if time.time() - s > 120:
                 return {"state": "failed"}
 
         return {"state": "successful"}
@@ -36,10 +42,14 @@ class VmOperation(BaseOpen):
     def force_stop_vm(self, name):
         domain = self.connection.lookupByName(name)
         domain.destroy()
-        time.sleep(10)
 
-        if domain.info()[0] != "0":
-            return {"state": "failed"}
+        # Return failed if 60s spent.
+        s = time.time()
+        while True:
+            if domain.info()[0] != 1:
+                break
+            if time.time() - s > 60:
+                return {"state": "failed"}
+
         return {"state": "successful"}
-
 
