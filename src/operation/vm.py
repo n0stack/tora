@@ -19,3 +19,22 @@ class VmOperate(self):
             return {"state": "failed"}
         return {"state": "successful"}
 
+    def stop_vm(self, id):
+        domain = self.connection.lookupByID(id)
+        domain.shutdown()
+
+        if domain.info()[0] != "0":
+            return {"state": "failed"}
+        return {"state": "successful"}
+
+
+    def force_stop_vm(self, id):
+        domain = self.connection.lookupByID(id)
+        domain.destroy()
+        tile.sleep(10)
+
+        if domain.info()[0] != "0":
+            return {"state": "failed"}
+        return {"state": "successful"}
+
+
