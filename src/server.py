@@ -3,9 +3,10 @@ from show.vminfo import DomainInfo
 from show.storageinfo import StorageInfo
 from create.vm import CreateVM
 from create.storage import CreateStorage
+from operation.vm import VmOperation
 import json
 
-from flask import Flask
+from flask import Flask, request
 from flask_restful import reqparse, abort, Api, Resource
 
 
@@ -47,16 +48,35 @@ class Domain(Resource):
         
         return r_data, 200
 
-    def post(self, func_name, id):
+
+class VMStatus(Resource):
+    def post(self, name):
+        data = VmOperation()
+        try:
+            json_data = request.get_json(force=True)
+            print(json_data)
+            operation = json_data["operation"]
+        except:
+            return {"message": "Illegal operation."}
+
+        if operation == "start":
+            r_data = data.start_vm(name)
+        elif operation == "stop":
+            r_data =  data.stop_vm(name)
+        elif operation == "force_stop":
+            r_data = data.force_stop_vm(name)
+        else:
+            return {"message": "No operation."}
         
+        return r_data
 
             
 api.add_resource(DomainInfoAll, '/info/<name>')
 api.add_resource(Domain, '/vm/<func_name>/<int:id>')
+api.add_resource(VMStatus, '/power/<name>')
 
 
 if __name__ == '__main__':
-
     app.run(debug=True, host='0.0.0.0', port=5000)
 
 
