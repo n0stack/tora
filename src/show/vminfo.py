@@ -86,6 +86,9 @@ class DomainInfo(BaseReadOnly):
         domain = self.connection.lookupByName(id)
         return minidom.parseString(domain.XMLDesc(0))
 
+    def get_domain_list(self):
+        return {"domain_list": self.connection.listDefinedDomains()}
+
     # All information
     def get_domain_info_all(self):
         domain = []
@@ -106,10 +109,27 @@ class DomainInfo(BaseReadOnly):
             for iface in domain_XML.getElementsByTagName("interface"):
                 networks.append(self.get_domain_network_info(iface))
             dom_info.update({"networks": networks})
-
             domain.append(dom_info)
 
         return {"interfaces": domain}
+
+    def get_domain_info(self, name):
+        dom_info = {"name": name}
+        dom_info.update(self.get_domain(name))
+        dom_info.update(self.get_state(name))
+        dom_info.update(self.get_max_memory(name))
+        dom_info.update(self.get_CPU_number(name))
+        dom_info.update(self.get_CPU_time(name))
+        
+        # Read XML file
+        domain_XML = self.get_domain_XML(name)
+        networks = []
+        # Show interface's information
+        for iface in domain_XML.getElementsByTagName("interface"):
+            networks.append(self.get_domain_network_info(iface))
+        dom_info.update({"networks": networks})
+
+        return dom_info
 
     # Get network information
     def get_domain_network_info(self, iface):
