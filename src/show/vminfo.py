@@ -90,7 +90,6 @@ class DomainInfo(BaseReadOnly):
     def get_domain_info_all(self):
         domain = []
         for id in self.connection.listDomainsID():
-
             dom_info = {"id": id}
             dom_info.update(self.get_domain(id))
             dom_info.update(self.get_state(id))
@@ -108,7 +107,7 @@ class DomainInfo(BaseReadOnly):
 
             domain.append(dom_info)
 
-        return domain
+        return {"interfaces": domain}
 
     # Get network information
     def get_domain_network_info(self, iface):

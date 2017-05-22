@@ -62,6 +62,6 @@ class CreateStorage(BaseOpen):
         xml = ET.tostring(pool).decode('utf-8').replace('\n', '')
         print(xml)
         # create pool
-        #pool_success = self.connection.storagePoolCreateXML(xml, 0)
+        pool_success = self.connection.storagePoolCreateXML(xml, 0)
         
         

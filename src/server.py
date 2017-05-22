@@ -23,10 +23,9 @@ class DomainInfoAll(Resource):
     """
     This api will return all domain's information
     """
-    def get(self, name):
+    def get(self):
         data = DomainInfo()
-        if name == "domain":
-            return data.get_domain_info_all(), 200
+        return data.get_domain_info_all(), 200
 
         
 class Domain(Resource):
@@ -71,8 +70,8 @@ class VMStatus(Resource):
         return r_data
 
             
-api.add_resource(DomainInfoAll, '/info/<name>')
-api.add_resource(Domain, '/vm/<func_name>/<int:id>')
+api.add_resource(DomainInfoAll, '/instance')
+api.add_resource(Domain, '/instance/<int:id>')
 api.add_resource(VMStatus, '/power/<name>')
 
 
