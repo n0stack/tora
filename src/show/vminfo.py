@@ -50,60 +50,62 @@ class DomainInfo(BaseReadOnly):
 
     # Device(nic) name
     def get_device(self, iface):
-        device = iface.getElementsByTagName("target")[0].getAttribute("dev")
+        try:
+            device = iface.getElementsByTagName("target")[0].getAttribute("dev")
+        except IndexError:
+            return {"device": "None"}
         return {"device": device}
 
     # Domain(VM) name
     def get_domain(self, id):
-        domain = self.connection.lookupByID(id)
+        domain = self.connection.lookupByName(id)
         return {"name": domain.name()}
 
     # VM tatus
     def get_state(self, id):
-        domain = self.connection.lookupByID(id)
+        domain = self.connection.lookupByName(id)
         return {"state": domain.info()[0]}
 
     # VM max memory
     def get_max_memory(self, id):
-        domain = self.connection.lookupByID(id)
+        domain = self.connection.lookupByName(id)
         return {"max_memory": domain.info()[1]}
 
     # Number of CPU
     def get_CPU_number(self, id):
-        domain = self.connection.lookupByID(id)
+        domain = self.connection.lookupByName(id)
         return {"number_of_CPU": domain.info()[3]}
 
     # CPU time
     def get_CPU_time(self, id):
-        domain = self.connection.lookupByID(id)
+        domain = self.connection.lookupByName(id)
         return {"CPU_time": domain.info()[2]}
 
     # Domain's XML(for settings)
     def get_domain_XML(self, id):
-        domain = self.connection.lookupByID(id)
+        domain = self.connection.lookupByName(id)
         return minidom.parseString(domain.XMLDesc(0))
-
-    def get_domain_list(self):
-        return {"domain_list": self.connection.listDomainsID()}
 
     # All information
     def get_domain_info_all(self):
         domain = []
-        for id in self.connection.listDomainsID():
-            dom_info = {"id": id}
-            dom_info.update(self.get_domain(id))
-            dom_info.update(self.get_state(id))
-            dom_info.update(self.get_max_memory(id))
-            dom_info.update(self.get_CPU_number(id))
-            dom_info.update(self.get_CPU_time(id))
+        domain_names = self.connection.listDefinedDomains()
+
+        for name in domain_names:
+            dom_info = {"name": name}
+            dom_info.update(self.get_domain(name))
+            dom_info.update(self.get_state(name))
+            dom_info.update(self.get_max_memory(name))
+            dom_info.update(self.get_CPU_number(name))
+            dom_info.update(self.get_CPU_time(name))
 
             # Read XML file
-            domain_XML = self.get_domain_XML(id)
-            interfaces = []
+            domain_XML = self.get_domain_XML(name)
+            networks = []
             # Show interface's information
             for iface in domain_XML.getElementsByTagName("interface"):
-                interfaces.append(self.get_domain_network_info(iface))
-            dom_info.update({"interfaces": interfaces})
+                networks.append(self.get_domain_network_info(iface))
+            dom_info.update({"networks": networks})
 
             domain.append(dom_info)
 
