@@ -35,7 +35,7 @@ class Domain(Resource):
     def get(self, name):
         data = DomainInfo()
 
-        # Check existance of id
+        # Check existance of name
         abort_if_vmid_doesnt_exist(data, name)
         r_data = data.get_domain_info(name)
 
@@ -46,23 +46,26 @@ class VMStatus(Resource):
     """
     Operate vm's power.
     """
-
     def post(self, name):
         data = VmOperation()
+
+        # Check existance of name
+        abort_if_vmid_doesnt_exist(data, name)
+
+        # If post data is illegal
         try:
             post_data = json.loads(request.data.decode('utf-8'))
             operation = post_data["operation"]
         except:
             return {"message": "Illegal operation."}, 400
 
+        # Operate VM
         if operation == "start":
             r_data = data.start_vm(name)
         elif operation == "stop":
-            r_data =  data.stop_vm(name)
-        elif operation == "force_stop":
-            r_data = data.force_stop_vm(name)
+            r_data =  data.force_stop_vm(name)
         else:
-            return {"message": "No operation."}, 400
+            return {"message": "Bad operation."}, 400
         
         return r_data
 
