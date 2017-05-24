@@ -43,14 +43,17 @@ class Domain(Resource):
 
 
 class VMStatus(Resource):
+    """
+    Operate vm's power.
+    """
+
     def post(self, name):
         data = VmOperation()
         try:
-            json_data = request.get_json(force=True)
-            print(json_data)
-            operation = json_data["operation"]
+            post_data = json.loads(request.data.decode('utf-8'))
+            operation = post_data["operation"]
         except:
-            return {"message": "Illegal operation."}
+            return {"message": "Illegal operation."}, 400
 
         if operation == "start":
             r_data = data.start_vm(name)
@@ -59,7 +62,7 @@ class VMStatus(Resource):
         elif operation == "force_stop":
             r_data = data.force_stop_vm(name)
         else:
-            return {"message": "No operation."}
+            return {"message": "No operation."}, 400
         
         return r_data
 
