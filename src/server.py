@@ -14,7 +14,8 @@ app = Flask(__name__)
 api = Api(app)
 
 # Check 404
-def abort_if_vmid_doesnt_exist(data, name):
+def abort_if_vmid_doesnt_exist(name):
+    data = DomainInfo()
     if name not in data.get_domain_list()['domain_list']:
         abort(404, message="{} doesn't exist".format(name))
 
@@ -36,7 +37,7 @@ class Domain(Resource):
         data = DomainInfo()
 
         # Check existance of name
-        abort_if_vmid_doesnt_exist(data, name)
+        abort_if_vmid_doesnt_exist(name)
         r_data = data.get_domain_info(name)
 
         return r_data, 200
@@ -50,7 +51,7 @@ class VMStatus(Resource):
         data = VmOperation()
 
         # Check existance of name
-        abort_if_vmid_doesnt_exist(data, name)
+        abort_if_vmid_doesnt_exist(name)
 
         # If post data is illegal
         try:
@@ -61,13 +62,13 @@ class VMStatus(Resource):
 
         # Operate VM
         if operation == "start":
-            r_data = data.start_vm(name)
+            r_data, status_code = data.start_vm(name)
         elif operation == "stop":
-            r_data =  data.force_stop_vm(name)
+            r_data, status_code =  data.force_stop_vm(name)
         else:
             return {"message": "Bad operation."}, 400
         
-        return r_data
+        return r_data, status_code
 
             
 api.add_resource(DomainAll, '/instance')

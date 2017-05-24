@@ -20,9 +20,9 @@ class VmOperation(BaseOpen):
             if domain.info()[0] == 1:
                 break
             if time.time() - s > 120:
-                return {"state": "failed"}
+                return {"state": "failed"}, 422
 
-        return {"state": "successful"}
+        return {"state": "successful"}, 200
 
     def stop_vm(self, name):
         domain = self.connection.lookupByName(name)
@@ -34,9 +34,9 @@ class VmOperation(BaseOpen):
             if domain.info()[0] != 1:
                 break
             if time.time() - s > 120:
-                return {"state": "failed"}
+                return {"state": "failed"}, 422
 
-        return {"state": "successful"}
+        return {"state": "successful"}, 200
 
 
     def force_stop_vm(self, name):
@@ -49,7 +49,7 @@ class VmOperation(BaseOpen):
             if domain.info()[0] != 1:
                 break
             if time.time() - s > 60:
-                return {"state": "failed"}
+                return {"state": "failed"}, 422
 
-        return {"state": "successful"}
+        return {"state": "successful"}, 200
 
