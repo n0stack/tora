@@ -133,7 +133,7 @@ class DomainInfo(BaseReadOnly):
 
     # Get network information
     def get_domain_network_info(self, iface):
-        network_info = {"interface_type": iface.getAttribute('type')}
+        network_info = {"interface_type": iface.getAttribute("type")}
         network_info.update(self.get_network(iface))
         network_info.update(self.get_bridge(iface))
         network_info.update(self.get_mac(iface))

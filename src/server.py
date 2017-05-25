@@ -1,8 +1,6 @@
 # coding:UTF-8
-from show.vminfo import DomainInfo
-from show.storageinfo import StorageInfo
-from create.vm import CreateVM
-from create.storage import CreateStorage
+from info.vm import DomainInfo
+from info.pool import StorageInfo
 from operation.vm import VmOperation
 import json
 
