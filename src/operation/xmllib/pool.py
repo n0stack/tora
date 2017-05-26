@@ -7,7 +7,7 @@ from create import utils
 from kvmconnect.base import BaseOpen
 
 
-class CreateStorage(BaseOpen):
+class PoolGen(BaseOpen):
     """
     Create pool and storage
     """
@@ -59,9 +59,7 @@ class CreateStorage(BaseOpen):
         pool.append(source)
         pool.append(target)
 
-        xml = ET.tostring(pool).decode('utf-8').replace('\n', '')
-        print(xml)
-        # create pool
+        self.xml = ET.tostring(pool).decode('utf-8').replace('\n', '')
         pool_success = self.connection.storagePoolCreateXML(xml, 0)
         
         

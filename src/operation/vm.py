@@ -1,8 +1,10 @@
 # coding: UTF-8
+import time
 import libvirt
 from kvmconnect.base import BaseOpen
 from xmllib.vm import VmGen
-import time
+from xmllib.pool import PoolGen
+
 
 class VmOperation(BaseOpen):
     """
@@ -55,7 +57,7 @@ class VmOperation(BaseOpen):
         return {"state": "successful"}, 200
 
 
-class CreateVM(BaseOpen):
+class VmCreate(BaseOpen):
     """
     Create VM
     """
@@ -76,4 +78,17 @@ class CreateVM(BaseOpen):
             return {"message": "Successful."}, 201
 
 
+class PoolCreate(BaseOpen):
+    def __init__(self):
+        super().__init__()
 
+    def __call__(self, pool_name, pool_size, pool_path):
+        pool = PoolGen()
+        pool(pool_name, pool_size, pool_path)
+
+        status = self.connection.storagePoolCreateXML(xml, 0)
+        
+        if not status:
+            return {"message": "Failed."}, 422
+        else:
+            return {"message": "Successful."}, 201
