@@ -1,6 +1,7 @@
 # coding: UTF-8
 import libvirt
 from kvmconnect.base import BaseOpen
+from xmllib.vm import VmGen
 import time
 
 class VmOperation(BaseOpen):
@@ -52,4 +53,27 @@ class VmOperation(BaseOpen):
                 return {"state": "failed"}, 422
 
         return {"state": "successful"}, 200
+
+
+class CreateVM(BaseOpen):
+    """
+    Create VM
+    """
+
+    def __init__(self):
+        super().__init__()
+
+    def __call__(self, name, boot, cdrom, memory_size, vcpu_num):
+        vm = VmGen()
+        vm(name, boot, cdrom, memory_size, vcpu_num)
+
+        dom = self.connection.createXML(vm.xml, 0)
+        dom = self.connection.defineXML(vm.xml)
+        
+        if not dom:
+            return {"message": "Connot create."}, 422
+        else:
+            return {"message": "Successful."}, 201
+
+
 

@@ -7,13 +7,13 @@ from create import utils
 from kvmconnect.base import BaseOpen
 
 
-class CreateVM(BaseOpen):
+class VmGen:
     """
     Create VM
     """
 
     def __init__(self):
-        super().__init__()
+        pass
 
     def __call__(self, name, boot, cdrom, memory_size, vcpu_num):
         self.vm_name = name
@@ -21,15 +21,6 @@ class CreateVM(BaseOpen):
         self.cdrom = cdrom
         self.memory_size = memory_size
         self.vcpu_num = vcpu_num
-
-        # Check the existence of VM
-        try:
-            vm = self.connection.lookupByName(self.vm_name)
-            if vm is not None:
-                return None
-
-        except libvirt.libvirtError:
-            pass
 
         # domain tag
         domain = Element('domain', attrib={'type': 'qemu'})
@@ -74,16 +65,7 @@ class CreateVM(BaseOpen):
         domain.append(self.os)
         domain.append(self.devices)
 
-        xml = ET.tostring(domain).decode('utf-8').replace('\n', '')
-        print(xml)
-        dom = self.connection.createXML(xml, 0)
-        dom = self.connection.defineXML(xml)
-
-        if not dom:
-            print("Cannot create/define domain")
-
-
-
+        self.xml = ET.tostring(domain).decode('utf-8').replace('\n', '')
 
     def create_os_tag(self):
         self.os = Element('os')
