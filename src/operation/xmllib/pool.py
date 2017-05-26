@@ -1,9 +1,8 @@
 # coding: UTF-8
 from xml.etree.ElementTree import Element, SubElement
 import xml.etree.ElementTree as ET
-import uuid
+from uuid import uuid4
 import libvirt
-from create import utils
 from kvmconnect.base import BaseOpen
 
 
@@ -22,7 +21,7 @@ class PoolGen(BaseOpen):
         name.text = pool_name
 
         uuid = Element('uuid')
-        uuid.text = utils.randomUUID()
+        uuid.text = uuid4()
 
         capacity = Element('capacity', attrib={'unit': 'bytes'})
         capacity.text = str(pool_size)

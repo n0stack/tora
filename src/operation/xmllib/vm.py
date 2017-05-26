@@ -3,7 +3,7 @@ from xml.etree.ElementTree import Element, SubElement
 import xml.etree.ElementTree as ET
 import uuid
 import libvirt
-from create import utils
+import uuid
 from kvmconnect.base import BaseOpen
 
 
@@ -31,7 +31,7 @@ class VmGen:
 
         # uuid tag
         uuid = Element('uuid')
-        uuid.text = utils.randomUUID()
+        uuid.text = uuid.uuid4()
 
         # description tag
         description = Element('description')

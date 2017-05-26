@@ -1,7 +1,7 @@
 # coding:UTF-8
 from info.vm import DomainInfo
 from info.pool import StorageInfo
-from operation.vm import VmOperation
+from operation.vm import VmOperation, VmCreate, PoolCreate
 import json
 
 from flask import Flask, request
@@ -76,6 +76,5 @@ api.add_resource(VMStatus, '/power/<name>')
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
-
 
 

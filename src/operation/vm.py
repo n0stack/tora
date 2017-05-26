@@ -2,8 +2,8 @@
 import time
 import libvirt
 from kvmconnect.base import BaseOpen
-from xmllib.vm import VmGen
-from xmllib.pool import PoolGen
+from operation.xmllib.vm import VmGen
+from operation.xmllib.pool import PoolGen
 
 
 class VmOperation(BaseOpen):
