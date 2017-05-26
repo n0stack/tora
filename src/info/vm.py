@@ -93,6 +93,7 @@ class DomainInfo(BaseReadOnly):
     def get_domain_info_all(self):
         domain = []
         domain_names = self.connection.listDefinedDomains()
+        print(domain_names)
 
         for name in domain_names:
             dom_info = {"name": name}
@@ -113,6 +114,7 @@ class DomainInfo(BaseReadOnly):
 
         return {"interfaces": domain}
 
+    # One information
     def get_domain_info(self, name):
         dom_info = {"name": name}
         dom_info.update(self.get_domain(name))
