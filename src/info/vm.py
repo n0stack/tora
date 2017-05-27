@@ -87,12 +87,24 @@ class DomainInfo(BaseReadOnly):
         return minidom.parseString(domain.XMLDesc(0))
 
     def get_domain_list(self):
-        return {"domain_list": self.connection.listDefinedDomains()}
+        # Get stopped domain list
+        domain_list = self.connection.listDefinedDomains()
+
+        # Get running domain list
+        running_domains = self.connection.listDomainsID()
+        if running_domains is None or len(running_domains) == 0:
+            pass
+        else:
+            for id in running_domains:
+                domain = self.connection.lookupByID(id)
+                domain_list.append(domain.name())
+
+        return {"domain_list": domain_list}
 
     # All information
     def get_domain_info_all(self):
         domain = []
-        domain_names = self.connection.listDefinedDomains()
+        domain_names = self.get_domain_list()["domain_list"]
         print(domain_names)
 
         for name in domain_names:

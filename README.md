@@ -6,4 +6,5 @@
 - virt-manager
 - libvirt-bin
 - bridge-utils
-- libvirt-dev
+- libvirt-devn
+
