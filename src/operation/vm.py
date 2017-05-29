@@ -36,7 +36,7 @@ class Status(BaseOpen):
 
         return {"state": "successful"}, 200
 
-    def stop_vm(self, name):
+    def stop(self, name):
         domain = self.connection.lookupByName(name)
         domain.shutdown()
 
@@ -69,7 +69,6 @@ class VmCreate(BaseOpen):
     """
     Create VM
     """
-
     def __init__(self):
         super().__init__()
 
