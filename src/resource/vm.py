@@ -1,9 +1,8 @@
 # coding:utf-8
-import json
 import operation.vm as VMop
 from resource.util import abort_if_vmid_doesnot_exist
 
-from flask_restful import Resource
+from flask_restful import Resource, reqparse
 
 
 class Status(Resource):
@@ -11,20 +10,34 @@ class Status(Resource):
     check/change VM status
     """
     def get(self):
+        # TODO: return vm status
         pass
 
     def post(self):
         status = VMop.Status()
 
-        # check post data
+        # set parser
+        parser = reqparse.RequestParser()
+        parser.add_argument('operation', type=str, location='json', required=True)
+        parser.add_argument('name', type=str, location='json', required=True)
+
+        args = parser.parse_args()
+        operation = args['operation']
+        name = args['name']
+
+        # check vm name
+        abort_if_vmid_doesnot_exist(name)
+
+        # manage VM
         try:
-            post_data = json.loads(requesst.data.decode('utf-8'))
-            operation = post_data['operation']
-        except:
+            r_data, status_code = {
+                "start": status.start,
+                "stop": status.stop,
+            }[operation](name)
+        except KeyError:
             return {"message": "invalid operation"}, 400
 
-        # check name
-        pass
+        return r_data, status_code
 
 
 class Create(Resource):

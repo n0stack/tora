@@ -1,80 +1,20 @@
 # coding:UTF-8
-import json
-from info.vm import DomainInfo
-from info.pool import StorageInfo
-from operation.vm import VmOperation, VmCreate, PoolCreate
 import resource.vm as VMres
+import resource.info as Infores
 
-from flask import Flask, request
-from flask_restful import reqparse, abort, Api, Resource
+from flask import Flask
+from flask_restful import Api, Resource
 
 app = Flask(__name__)
 api = Api(app)
-
-# Check 404
-def abort_if_vmid_doesnt_exist(name):
-    data = DomainInfo()
-    if name not in data.get_domain_list()['domain_list']:
-        abort(404, message="{} doesn't exist".format(name))
-
-
-class DomainAll(Resource):
-    """
-    This api will return all domain's information
-    """
-    def get(self):
-        data = DomainInfo()
-        return data.get_domain_info_all(), 200
-
-        
-class Domain(Resource):
-    """
-    about vm operation
-    """
-    def get(self, name):
-        data = DomainInfo()
-
-        # Check existance of name
-        abort_if_vmid_doesnt_exist(name)
-        r_data = data.get_domain_info(name)
-
-        return r_data, 200
-
-
-class VMStatus(Resource):
-    """
-    Operate vm's power.
-    """
-    def post(self, name):
-        vmop = VmOperation()
-
-        # Check existance of name
-        abort_if_vmid_doesnt_exist(name)
-
-        # If post data is illegal
-        try:
-            post_data = json.loads(request.data.decode('utf-8'))
-            operation = post_data["operation"]
-        except:
-            return {"message": "Illegal operation."}, 400
-
-        # Operate VM
-        if operation == "start":
-            r_data, status_code = vmop.start(name)
-        elif operation == "stop":
-            r_data, status_code =  vmop.force_stop(name)
-        else:
-            return {"message": "Bad operation."}, 400
-        
-        return r_data, status_code
 
 
 api.add_resource(VMres.Status, '/vm/status')
 api.add_resource(VMres.Create, '/vm/create')
 api.add_resource(VMres.Delete, '/vm/delete')
 
-api.add_resource(DomainAll, '/instance')
-api.add_resource(Domain, '/instance/<name>')
+api.add_resource(Infores.DomainAll, '/vm/info')
+api.add_resource(Infores.Domain, '/vm/info/<string:name>')
 
 
 if __name__ == '__main__':
