@@ -105,7 +105,6 @@ class DomainInfo(BaseReadOnly):
     def get_domain_info_all(self):
         domain = []
         domain_names = self.get_domain_list()["domain_list"]
-        print(domain_names)
 
         for name in domain_names:
             dom_info = {"name": name}
