@@ -1,23 +1,32 @@
 # coding: UTF-8
 import time
 import libvirt
+import enum
 from kvmconnect.base import BaseOpen
 from operation.xmllib.vm import VmGen
 from operation.xmllib.pool import PoolGen
 
 
-class VmOperation(BaseOpen):
+class Status(BaseOpen):
     """
-    about vm
+    manage vm status
     """
+
+    status = enum.Enum('status', 'poweroff running')
+
     def __init__(self):
         super().__init__()
 
-    def start_vm(self, name):
+    def info(self):
+        """Return status of vm
+        """
+        pass
+
+    def start(self, name):
         domain = self.connection.lookupByName(name)
         domain.create()
 
-        # Return failed if 60s spent.
+        # fail if over 120 seconds
         s = time.time()
         while True:
             if domain.info()[0] == 1:
@@ -27,11 +36,11 @@ class VmOperation(BaseOpen):
 
         return {"state": "successful"}, 200
 
-    def stop_vm(self, name):
+    def stop(self, name):
         domain = self.connection.lookupByName(name)
         domain.shutdown()
 
-        # Return failed if 60s spent.
+        # fail if over 120 seconds
         s = time.time()
         while True:
             if domain.info()[0] != 1:
@@ -41,12 +50,11 @@ class VmOperation(BaseOpen):
 
         return {"state": "successful"}, 200
 
-
-    def force_stop_vm(self, name):
+    def force_stop(self, name):
         domain = self.connection.lookupByName(name)
         domain.destroy()
 
-        # Return failed if 60s spent.
+        # fail if over 60 seconds
         s = time.time()
         while True:
             if domain.info()[0] != 1:
@@ -61,7 +69,6 @@ class VmCreate(BaseOpen):
     """
     Create VM
     """
-
     def __init__(self):
         super().__init__()
 
