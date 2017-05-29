@@ -1,12 +1,12 @@
 # coding:UTF-8
+import json
 from info.vm import DomainInfo
 from info.pool import StorageInfo
 from operation.vm import VmOperation, VmCreate, PoolCreate
-import json
+import resource.vm as VMres
 
 from flask import Flask, request
 from flask_restful import reqparse, abort, Api, Resource
-
 
 app = Flask(__name__)
 api = Api(app)
@@ -46,7 +46,7 @@ class VMStatus(Resource):
     Operate vm's power.
     """
     def post(self, name):
-        data = VmOperation()
+        vmop = VmOperation()
 
         # Check existance of name
         abort_if_vmid_doesnt_exist(name)
@@ -60,21 +60,22 @@ class VMStatus(Resource):
 
         # Operate VM
         if operation == "start":
-            r_data, status_code = data.start_vm(name)
+            r_data, status_code = vmop.start(name)
         elif operation == "stop":
-            r_data, status_code =  data.force_stop_vm(name)
+            r_data, status_code =  vmop.force_stop(name)
         else:
             return {"message": "Bad operation."}, 400
         
         return r_data, status_code
 
-            
+
+api.add_resource(VMres.Status, '/vm/status')
+api.add_resource(VMres.Create, '/vm/create')
+api.add_resource(VMres.Delete, '/vm/delete')
+
 api.add_resource(DomainAll, '/instance')
 api.add_resource(Domain, '/instance/<name>')
-api.add_resource(VMStatus, '/power/<name>')
 
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
-
-
