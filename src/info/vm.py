@@ -57,43 +57,54 @@ class DomainInfo(BaseReadOnly):
         return {"device": device}
 
     # Domain(VM) name
-    def get_domain(self, id):
-        domain = self.connection.lookupByName(id)
+    def get_domain(self, name):
+        domain = self.connection.lookupByName(name)
         return {"name": domain.name()}
 
     # VM tatus
-    def get_state(self, id):
-        domain = self.connection.lookupByName(id)
+    def get_state(self, name):
+        domain = self.connection.lookupByName(name)
         return {"state": domain.info()[0]}
 
     # VM max memory
-    def get_max_memory(self, id):
-        domain = self.connection.lookupByName(id)
+    def get_max_memory(self, name):
+        domain = self.connection.lookupByName(name)
         return {"max_memory": domain.info()[1]}
 
     # Number of CPU
-    def get_CPU_number(self, id):
-        domain = self.connection.lookupByName(id)
+    def get_CPU_number(self, name):
+        domain = self.connection.lookupByName(name)
         return {"number_of_CPU": domain.info()[3]}
 
     # CPU time
-    def get_CPU_time(self, id):
-        domain = self.connection.lookupByName(id)
+    def get_CPU_time(self, name):
+        domain = self.connection.lookupByName(name)
         return {"CPU_time": domain.info()[2]}
 
     # Domain's XML(for settings)
-    def get_domain_XML(self, id):
-        domain = self.connection.lookupByName(id)
+    def get_domain_XML(self, name):
+        domain = self.connection.lookupByName(name)
         return minidom.parseString(domain.XMLDesc(0))
 
     def get_domain_list(self):
-        return {"domain_list": self.connection.listDefinedDomains()}
+        # Get stopped domain list
+        domain_list = self.connection.listDefinedDomains()
+
+        # Get running domain list
+        running_domains = self.connection.listDomainsID()
+        if running_domains is None or len(running_domains) == 0:
+            pass
+        else:
+            for id in running_domains:
+                domain = self.connection.lookupByID(id)
+                domain_list.append(domain.name())
+
+        return {"domain_list": domain_list}
 
     # All information
     def get_domain_info_all(self):
         domain = []
-        domain_names = self.connection.listDefinedDomains()
-        print(domain_names)
+        domain_names = self.get_domain_list()["domain_list"]
 
         for name in domain_names:
             dom_info = {"name": name}
