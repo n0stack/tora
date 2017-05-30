@@ -9,9 +9,8 @@ app = Flask(__name__)
 api = Api(app)
 
 
-api.add_resource(VMres.Status, '/vm/status')
-api.add_resource(VMres.Create, '/vm/create')
-api.add_resource(VMres.Delete, '/vm/delete')
+api.add_resource(VMres.VM, '/vm')
+api.add_resource(VMres.VMname, '/vm/<string:name>')
 
 api.add_resource(Infores.DomainAll, '/vm/info')
 api.add_resource(Infores.Domain, '/vm/info/<string:name>')
