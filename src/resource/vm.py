@@ -1,7 +1,7 @@
 # coding:utf-8
 import operation.vm as VMop
 from info.vm import DomainInfo
-from resource.util import abort_if_vmid_doesnot_exist
+from resource.util import abort_if_vmid_doesnot_exist, abort_if_vmid_exists
 
 from flask_restful import Resource, reqparse
 
@@ -35,7 +35,24 @@ class VMname(Resource):
         """
         create vm 
         """
-        pass
+        # check vm name
+        abort_if_vmid_exists(name)
+
+        status = VMop.Status()
+
+        # set parser
+        parser = reqparse.RequestParser()
+        parser.add_argument('name', type=str, location='json', required=True)
+        parser.add_argument('boot', type=str, location='json', required=True)
+        parser.add_argument('cdrom', type=str, location='json', required=True)
+        parser.add_argument('memory_size', type=str, location='json', required=True)
+        parser.add_argument('vcpu_num', type=str, location='json', required=True)
+
+        args = parser.parse_args()
+        _args = (args['name'], args['boot'], args['cdrom'], args['memory_size'], args['vcpu_num'])
+
+        vmcreate = VMop.Create()
+        return vmcreate(*_args)
 
     def put(self, name):
         """
