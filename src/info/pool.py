@@ -3,7 +3,7 @@ import libvirt
 from xml.dom import minidom
 from kvmconnect.base import BaseReadOnly
 
-class StorageInfo(BaseReadOnly):
+class PoolInfo(BaseReadOnly):
     """
     Show Storage Pool's information
     """
