@@ -3,8 +3,7 @@ import libvirt
 from xml.dom import minidom
 from kvmconnect.base import BaseReadOnly
 
-
-class StorageInfo(BaseReadOnly):
+class PoolInfo(BaseReadOnly):
     """
     Show Storage Pool's information
     """
@@ -13,7 +12,7 @@ class StorageInfo(BaseReadOnly):
         super().__init__()
 
     # Show storage pool's information
-    def show_storage_info_all(self):
+    def get_storage_info_all(self):
         storage = []
 
         pools = self.connection.listAllStoragePools(0)
