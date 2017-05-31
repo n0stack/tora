@@ -12,12 +12,24 @@ class VolumeInfo(BaseReadOnly):
         super().__init__()
 
     def get_volume_list(self, poolname):
-        volumes = self.connection.storagePoolLookupByName(poolname)
+        self.pool = self.connection.storagePoolLookupByName(poolname)
 
         # failed
-        if volumes is None:
+        if self.pool is None:
             return {"message": "Failed."}, 400
 
-        return {"volumes": vomules.listVolumes()}
-            
+        volumes = []
+
+        for volume in self.pool.listVolumes():
+            voltmp = {}
+            volumes.update({"name": volume})
+
+            volinfo = self.pool.storageVolLookupByName(volume).info()
+            voltmp.update({"type": str(volinfo[0])})
+            voltmp.update({"capacity": str(volinfo[1])})
+            voltmp.update({"allocation": str(volinfo[2])})
+
+            volumes.append(voltmp)
+
+        return {"volumes": volumes}
             
