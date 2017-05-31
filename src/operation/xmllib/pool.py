@@ -6,13 +6,12 @@ import libvirt
 from kvmconnect.base import BaseOpen
 
 
-class PoolGen(BaseOpen):
+class PoolGen:
     """
     Create pool and storage
     """
-
     def __init__(self):
-        super().__init__()
+        pass
 
     def __call__(self, pool_name, pool_size, pool_path):
         
@@ -59,6 +58,5 @@ class PoolGen(BaseOpen):
         pool.append(target)
 
         self.xml = ET.tostring(pool).decode('utf-8').replace('\n', '')
-        pool_success = self.connection.storagePoolCreateXML(xml, 0)
         
         
