@@ -58,6 +58,5 @@ class PoolGen:
         pool.append(target)
 
         self.xml = ET.tostring(pool).decode('utf-8').replace('\n', '')
-        pool_success = self.connection.storagePoolCreateXML(xml, 0)
         
         
