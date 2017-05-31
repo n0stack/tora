@@ -6,13 +6,12 @@ import libvirt
 from kvmconnect.base import BaseOpen
 
 
-class PoolGen(BaseOpen):
+class PoolGen:
     """
     Create pool and storage
     """
-
     def __init__(self):
-        super().__init__()
+        pass
 
     def __call__(self, pool_name, pool_size, pool_path):
         
