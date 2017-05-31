@@ -13,8 +13,8 @@ class VM(Resource):
         """
         get all vm info
         """
-        # TODO: return vm status
-        pass
+        dominfo = DomainInfo()
+        return dominfo.get_domain_info_all(), 200
 
 
 class VMname(Resource):
@@ -22,7 +22,13 @@ class VMname(Resource):
         """
         get vm info
         """
-        pass
+        dominfo = DomainInfo()
+
+        # check vm name
+        abort_if_vmid_doesnot_exist(name)
+        r_data = dominfo.get_domain_info(name)
+
+        return r_data, 200
 
     def post(self, name):
         """
