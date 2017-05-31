@@ -68,4 +68,8 @@ class VMname(Resource):
         """
         delete vm
         """
-        pass
+        # check vm name
+        abort_if_vmid_doesnot_exist(name)
+
+        vmdelete = VMop.Delete()
+        return vmdelete(name)
