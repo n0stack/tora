@@ -1,5 +1,6 @@
 # coding:utf-8
 import operation.vm as VMop
+from info.vm import DomainInfo
 from resource.util import abort_if_vmid_doesnot_exist
 
 from flask_restful import Resource, reqparse
