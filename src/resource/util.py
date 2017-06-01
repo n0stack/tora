@@ -32,6 +32,3 @@ def abort_if_poolname_doesnot_exist(name):
         poolinfo.connection.lookupByName(name)
     except:
         abort(404, message="{} does not exist".format(name))        
-
-
-

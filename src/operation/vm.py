@@ -65,7 +65,7 @@ class Status(BaseOpen):
         return {"state": "successful"}, 200
 
 
-class VmCreate(BaseOpen):
+class Create(BaseOpen):
     """
     Create VM
     """
@@ -83,6 +83,24 @@ class VmCreate(BaseOpen):
             return {"message": "Connot create."}, 422
         else:
             return {"message": "Successful."}, 201
+
+
+class Delete(BaseOpen):
+    """
+    Delete VM
+    """
+    def __init__(self):
+        super().__init__()
+
+    def __call__(self, name):
+        try:
+            vdom = self.connection.lookupByName(name)
+            vdom.destroy()
+            vdom.undefine()
+        except:
+            return {"message": "Connot create."}, 422
+
+        return {"message": "Successful."}, 201
 
 
 class PoolCreate(BaseOpen):
