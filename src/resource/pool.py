@@ -1,7 +1,7 @@
 # coding:utf-8
 import operation.pool as Poolop
 from info.pool import PoolInfo
-from resource.util import abort_if_pool_doesnot_exist, abort_if_pool_exists
+from resource.util import abort_if_poolname_doesnot_exist, abort_if_poolname_exists
 from flask_restful import Resource, reqparse
 
 
@@ -27,7 +27,7 @@ class Poolname(Resource):
         create pool
         """
         # check pool name
-        abort_if_pool_exists(name)
+        abort_if_poolname_exists(name)
 
         # set parser
         parser = reqparse.RequestParser()
@@ -46,7 +46,7 @@ class Poolname(Resource):
         delete pool
         """
         # check pool name
-        abort_if_pool_doesnot_exist(name)
+        abort_if_poolname_doesnot_exist(name)
 
         pooldelete = Poolop.Delete()
 
