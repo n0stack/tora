@@ -27,7 +27,7 @@ def abort_if_poolname_exists(name):
     except:
         pass
         
-def abort_if_poolname_doesnot_exit(name):
+def abort_if_poolname_doesnot_exist(name):
     try:
         poolinfo.connection.lookupByName(name)
     except:
