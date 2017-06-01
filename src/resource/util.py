@@ -1,5 +1,6 @@
 # coding:utf-8
 from info.vm import DomainInfo
+from info.pool import PoolInfo
 
 from flask_restful import abort
 
