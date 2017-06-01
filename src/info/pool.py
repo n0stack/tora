@@ -34,3 +34,4 @@ class PoolInfo(BaseReadOnly):
             storage_pool.append(pool_info)
 
         return {"pools": storage_pool}
+
