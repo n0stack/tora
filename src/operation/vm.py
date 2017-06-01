@@ -32,7 +32,7 @@ class Status(BaseOpen):
             if domain.info()[0] == 1:
                 break
             if time.time() - s > 120:
-                return {"state": "failed"}, 422
+                return {"state": "failed"}, 409
 
         return {"state": "successful"}, 200
 
@@ -46,7 +46,7 @@ class Status(BaseOpen):
             if domain.info()[0] != 1:
                 break
             if time.time() - s > 120:
-                return {"state": "failed"}, 422
+                return {"state": "failed"}, 409
 
         return {"state": "successful"}, 200
 
@@ -60,7 +60,7 @@ class Status(BaseOpen):
             if domain.info()[0] != 1:
                 break
             if time.time() - s > 60:
-                return {"state": "failed"}, 422
+                return {"state": "failed"}, 409
 
         return {"state": "successful"}, 200
 
