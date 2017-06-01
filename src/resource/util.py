@@ -1,9 +1,37 @@
 # coding:utf-8
 from info.vm import DomainInfo
+from info.pool import PoolInfo
 
 from flask_restful import abort
 
-def abort_if_vmid_doesnot_exist(name):
+def abort_if_vmname_does_exist(name):
     dominfo = DomainInfo()
-    if name not in dominfo.get_domain_list()['domain_list']:
-        abort(404, message="{} does not exist".format(name))
+    try:
+        dominfo.connection.lookupByName(name)
+        abort(409, message="{} exist".format(name))
+    except:
+        pass
+
+def abort_if_vmname_doesnot_exist(name):
+    dominfo = DomainInfo()
+    try:
+        dominfo.connection.lookupByName(name)
+    except:
+        abort(404, message="{} does not exist".format(name))        
+
+def abort_if_poolname_does_exist(name):
+    poolinfo = PoolInfo()
+    try:
+        poolinfo.connection.lookupByName(name)
+        abort(409, message="{} exist".format(name))
+    except:
+        pass
+        
+def abort_if_poolname_doesnot_exit(name):
+    try:
+        poolinfo.connection.lookupByName(name)
+    except:
+        abort(404, message="{} does not exist".format(name))        
+
+
+
