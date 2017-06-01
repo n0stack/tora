@@ -20,7 +20,9 @@ class Poolname(Resource):
         """
         get pool info
         """
-        pass
+        poolinfo = PoolInfo()
+        abort_if_poolname_doesnot_exist(name)
+        return poolinfo.get_pool_info(), 200
 
     def post(self, name):
         """

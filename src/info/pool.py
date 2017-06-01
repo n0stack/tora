@@ -53,5 +53,12 @@ class PoolInfo(BaseReadOnly):
 
         return pool_info
         
-
+    def poolname_exists(self, name):
+        try:
+            self.connection.storagePoolLookupByName(name)
+        except:
+            return False
+        return True
+    
+            
         

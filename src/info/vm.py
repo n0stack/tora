@@ -153,3 +153,11 @@ class DomainInfo(BaseReadOnly):
         network_info.update(self.get_device(iface))
 
         return network_info
+
+    def vmname_exists(self, name):
+        try:
+            self.connection.lookupByName(name)
+        except:
+            return False
+        return True
+    
