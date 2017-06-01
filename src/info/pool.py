@@ -12,8 +12,8 @@ class PoolInfo(BaseReadOnly):
         super().__init__()
 
     # Show storage pool's information
-    def get_storage_info_all(self):
-        storage = []
+    def get_pool_info_all(self):
+        storage_pool = []
 
         pools = self.connection.listAllStoragePools(0)
 
@@ -31,6 +31,6 @@ class PoolInfo(BaseReadOnly):
             pool_info.update({'is_persistent': pool.isPersistent()})
             pool_info.update({'volumes': pool.listVolumes()})
 
-            storage.append(pool_info)
+            storage_pool.append(pool_info)
 
-        return storage
+        return {"pools": storage_pool}
