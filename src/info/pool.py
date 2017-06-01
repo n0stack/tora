@@ -41,15 +41,15 @@ class PoolInfo(BaseReadOnly):
         pool_info = {}
         
         pool_info.update({'name': pool.name()})
-        pool_info.update({'name': pool.UUIDString()})
-        pool_info.update({'name': pool.autostart()})
-        pool_info.update({'name': info[0]()})
-        pool_info.update({'name': info[1]()})
-        pool_info.update({'name': info[2]()})
-        pool_info.update({'name': info[3]()})
-        pool_info.update({'name': pool.isActive()})
-        pool_info.update({'name': pool.isPersistent()})
-        pool_info.update({'name': pool.listVolumes()})
+        pool_info.update({'uuid': pool.UUIDString()})
+        pool_info.update({'Autostart': pool.autostart()})
+        pool_info.update({'state': info[0]()})
+        pool_info.update({'capacity': info[1]()})
+        pool_info.update({'allocation': info[2]()})
+        pool_info.update({'available': info[3]()})
+        pool_info.update({'is_active': pool.isActive()})
+        pool_info.update({'is_persistent': pool.isPersistent()})
+        pool_info.update({'volumes': pool.listVolumes()})
 
         return pool_info
         
