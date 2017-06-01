@@ -35,3 +35,23 @@ class PoolInfo(BaseReadOnly):
 
         return {"pools": storage_pool}
 
+    def get_pool_info(self, name):
+        pool = self.connection.storagePoolLookupByName(name)
+        info = pool.info()
+        pool_info = {}
+        
+        pool_info.update({'name': pool.name()})
+        pool_info.update({'name': pool.UUIDString()})
+        pool_info.update({'name': pool.autostart()})
+        pool_info.update({'name': info[0]()})
+        pool_info.update({'name': info[1]()})
+        pool_info.update({'name': info[2]()})
+        pool_info.update({'name': info[3]()})
+        pool_info.update({'name': pool.isActive()})
+        pool_info.update({'name': pool.isPersistent()})
+        pool_info.update({'name': pool.listVolumes()})
+
+        return pool_info
+        
+
+        
