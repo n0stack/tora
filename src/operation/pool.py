@@ -1,22 +1,42 @@
 # coding: UTF-8
-import time
-import libvirt
-import enum
 from kvmconnect.base import BaseOpen
-from operation.xmllib.vm import PoolGen
+from operation.xmllib.pool import PoolGen
 
-class PoolCreate(BaseOpen):
+import os
+
+
+class Create(BaseOpen):
     def __init__(self):
         super().__init__()
 
-    def __call__(self, pool_name, pool_size, pool_path):
-        pool = PoolGen()
-        pool(pool_name, pool_size, pool_path)
+    def __call__(self, pool_name="tora", pool_path="$HOME/pool"):
+        path = os.path.expandvars(pool_path)
+        if not os.path.exists(path):
+            try:
+                os.mkdir(path)
+            except PermissionError:
+                return {"message": "Failed."}, 422
 
-        status = self.connection.storagePoolCreateXML(pool.xml, 0)
+        pool = PoolGen()
+        pool(pool_name, path)
+
+        status = self.connection.storagePoolDefineXML(pool.xml, 0)
 
         if not status:
             return {"message": "Failed."}, 422
         else:
             return {"message": "Successful."}, 201
         
+
+class Delete(BaseOpen):
+    def __init__(self):
+        super().__init__()
+
+    def __call__(self, name):
+        try:
+            pool = self.connection.storagePoolLookupByName(name)
+            pool.undefine()
+        except:
+            return {"message": "Failed."}, 422
+
+        return {"message": "Successful."}, 201

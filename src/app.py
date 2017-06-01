@@ -1,5 +1,6 @@
 # coding:UTF-8
 import resource.vm as VMres
+import resource.pool as Poolres
 
 from flask import Flask
 from flask_restful import Api, Resource
@@ -9,6 +10,9 @@ api = Api(app)
 
 api.add_resource(VMres.VM, '/vm')
 api.add_resource(VMres.VMname, '/vm/<string:name>')
+api.add_resource(Poolres.Pool, '/pool')
+api.add_resource(Poolres.Poolname, '/pool/<string:name>')
+
 
 if __name__ == '__main__':
     app.config["ERROR_404_HELP"] = False
