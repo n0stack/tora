@@ -1,7 +1,7 @@
 # coding:utf-8
 import operation.vm as VMop
 from info.vm import DomainInfo
-from resource.util import abort_if_vmid_doesnot_exist, abort_if_vmid_exists
+from resource.util import abort_if_vmname_doesnot_exist
 
 from flask_restful import Resource, reqparse
 
@@ -26,7 +26,7 @@ class VMname(Resource):
         dominfo = DomainInfo()
 
         # check vm name
-        abort_if_vmid_doesnot_exist(name)
+        abort_if_vmname_doesnot_exist(name)
         r_data = dominfo.get_domain_info(name)
 
         return r_data, 200
