@@ -52,7 +52,11 @@ class VMname(Resource):
         _args = (args['name'], args['boot'], args['cdrom'], args['memory_size'], args['vcpu_num'])
 
         vmcreate = VMop.Create()
-        return vmcreate(*_args)
+        is_success = vmcreate(*_args)
+
+        if is_success is False:
+            return {"message": "failed"}, 422
+        return {"message": "successful"}, 201
 
     def put(self, name):
         """
@@ -80,9 +84,9 @@ class VMname(Resource):
         except KeyError:
             return {"message": "invalid operation"}, 400
 
-        if is_success is True:
-            return {"message": "successful"}, 200
-        return {"message": "failed"}, 409
+        if is_success is False:
+            return {"message": "failed"}, 409
+        return {"message": "successful"}, 200
 
     def delete(self, name):
         """

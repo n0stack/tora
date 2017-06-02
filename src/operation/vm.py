@@ -83,9 +83,9 @@ class Create(BaseOpen):
         dom = self.connection.defineXML(vm.xml)
         
         if not dom:
-            return {"message": "Connot create."}, 422
+            return False
         else:
-            return {"message": "Successful."}, 201
+            return True
 
 
 class Delete(BaseOpen):
