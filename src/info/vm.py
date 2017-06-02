@@ -63,8 +63,10 @@ class DomainInfo(BaseReadOnly):
 
     # VM tatus
     def get_state(self, name):
+        # あとで要書き換え
         domain = self.connection.lookupByName(name)
-        return {"state": domain.info()[0]}
+        status = {'1': 'running', '5': 'shut_off'}
+        return {"state": status[str(domain.info()[0])]}
 
     # VM max memory
     def get_max_memory(self, name):

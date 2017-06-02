@@ -36,7 +36,7 @@ class VMname(Resource):
         create vm 
         """
         # check vm name
-        abort_if_vmid_exists(name)
+        abort_if_vmname_exists(name)
 
         status = VMop.Status()
 
@@ -52,14 +52,18 @@ class VMname(Resource):
         _args = (args['name'], args['boot'], args['cdrom'], args['memory_size'], args['vcpu_num'])
 
         vmcreate = VMop.Create()
-        return vmcreate(*_args)
+        result = vmcreate(*_args)
+
+        if result is False:
+            return {"message": "failed"}, 422
+        return {"message": "successful"}, 201
 
     def put(self, name):
         """
         change vm status
         """
         # check vm name
-        abort_if_vmid_doesnot_exist(name)
+        abort_if_vmname_doesnot_exist(name)
 
         status = VMop.Status()
 
@@ -72,21 +76,30 @@ class VMname(Resource):
 
         # manage VM
         try:
-            r_data, status_code = {
+            result = {
                 "start": status.start,
                 "stop": status.stop,
+                "force_stop": status.force_stop
             }[operation](name)
         except KeyError:
             return {"message": "invalid operation"}, 400
 
-        return r_data, status_code
+        if result is False:
+            return {"message": "failed"}, 409
+        return {"message": "successful"}, 200
 
     def delete(self, name):
         """
         delete vm
         """
         # check vm name
-        abort_if_vmid_doesnot_exist(name)
+        abort_if_vmname_doesnot_exist(name)
 
         vmdelete = VMop.Delete()
-        return vmdelete(name)
+        result = vmdelete(name)
+
+        if result is False:
+            return {"message":"failed"}, 400
+        return {"message": "success"}, 200
+
+    

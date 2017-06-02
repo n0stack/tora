@@ -24,7 +24,10 @@ class Status(BaseOpen):
 
     def start(self, name):
         domain = self.connection.lookupByName(name)
-        domain.create()
+        try:
+            domain.create()
+        except:
+            return False
 
         # fail if over 120 seconds
         s = time.time()
@@ -32,9 +35,9 @@ class Status(BaseOpen):
             if domain.info()[0] == 1:
                 break
             if time.time() - s > 120:
-                return {"state": "failed"}, 409
+                return False
 
-        return {"state": "successful"}, 200
+        return True
 
     def stop(self, name):
         domain = self.connection.lookupByName(name)
@@ -46,9 +49,9 @@ class Status(BaseOpen):
             if domain.info()[0] != 1:
                 break
             if time.time() - s > 120:
-                return {"state": "failed"}, 409
+                return False
 
-        return {"state": "successful"}, 200
+        return True
 
     def force_stop(self, name):
         domain = self.connection.lookupByName(name)
@@ -60,9 +63,9 @@ class Status(BaseOpen):
             if domain.info()[0] != 1:
                 break
             if time.time() - s > 60:
-                return {"state": "failed"}, 409
+                return False
 
-        return {"state": "successful"}, 200
+        return True
 
 
 class Create(BaseOpen):
@@ -80,9 +83,9 @@ class Create(BaseOpen):
         dom = self.connection.defineXML(vm.xml)
         
         if not dom:
-            return {"message": "Connot create."}, 422
+            return False
         else:
-            return {"message": "Successful."}, 201
+            return True
 
 
 class Delete(BaseOpen):
@@ -98,22 +101,8 @@ class Delete(BaseOpen):
             vdom.destroy()
             vdom.undefine()
         except:
-            return {"message": "Connot create."}, 422
+            return False
 
-        return {"message": "Successful."}, 201
+        return True
 
 
-class PoolCreate(BaseOpen):
-    def __init__(self):
-        super().__init__()
-
-    def __call__(self, pool_name, pool_size, pool_path):
-        pool = PoolGen()
-        pool(pool_name, pool_size, pool_path)
-
-        status = self.connection.storagePoolCreateXML(xml, 0)
-        
-        if not status:
-            return {"message": "Failed."}, 422
-        else:
-            return {"message": "Successful."}, 201
