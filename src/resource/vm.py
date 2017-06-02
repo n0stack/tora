@@ -36,7 +36,7 @@ class VMname(Resource):
         create vm 
         """
         # check vm name
-        abort_if_vmid_exists(name)
+        abort_if_vmname_exists(name)
 
         status = VMop.Status()
 
@@ -59,7 +59,7 @@ class VMname(Resource):
         change vm status
         """
         # check vm name
-        abort_if_vmid_doesnot_exist(name)
+        abort_if_vmname_doesnot_exist(name)
 
         status = VMop.Status()
 
@@ -75,6 +75,7 @@ class VMname(Resource):
             r_data, status_code = {
                 "start": status.start,
                 "stop": status.stop,
+                "force_stop": status.force_stop
             }[operation](name)
         except KeyError:
             return {"message": "invalid operation"}, 400
@@ -86,7 +87,7 @@ class VMname(Resource):
         delete vm
         """
         # check vm name
-        abort_if_vmid_doesnot_exist(name)
+        abort_if_vmname_doesnot_exist(name)
 
         vmdelete = VMop.Delete()
         return vmdelete(name)
