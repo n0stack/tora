@@ -101,9 +101,9 @@ class Delete(BaseOpen):
             vdom.destroy()
             vdom.undefine()
         except:
-            return {"message": "Connot create."}, 422
+            return False
 
-        return {"message": "Successful."}, 201
+        return True
 
 
 class PoolCreate(BaseOpen):

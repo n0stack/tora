@@ -96,4 +96,10 @@ class VMname(Resource):
         abort_if_vmname_doesnot_exist(name)
 
         vmdelete = VMop.Delete()
-        return vmdelete(name)
+        is_success = vmdelete(name)
+
+        if is_success is False:
+            return {"message":"failed"}, 400
+        return {"message": "success"}, 200
+
+    
