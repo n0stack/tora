@@ -52,9 +52,9 @@ class VMname(Resource):
         _args = (args['name'], args['boot'], args['cdrom'], args['memory_size'], args['vcpu_num'])
 
         vmcreate = VMop.Create()
-        is_success = vmcreate(*_args)
+        result = vmcreate(*_args)
 
-        if is_success is False:
+        if result is False:
             return {"message": "failed"}, 422
         return {"message": "successful"}, 201
 
@@ -76,7 +76,7 @@ class VMname(Resource):
 
         # manage VM
         try:
-            is_success = {
+            result = {
                 "start": status.start,
                 "stop": status.stop,
                 "force_stop": status.force_stop
@@ -84,7 +84,7 @@ class VMname(Resource):
         except KeyError:
             return {"message": "invalid operation"}, 400
 
-        if is_success is False:
+        if result is False:
             return {"message": "failed"}, 409
         return {"message": "successful"}, 200
 
@@ -96,9 +96,9 @@ class VMname(Resource):
         abort_if_vmname_doesnot_exist(name)
 
         vmdelete = VMop.Delete()
-        is_success = vmdelete(name)
+        result = vmdelete(name)
 
-        if is_success is False:
+        if result is False:
             return {"message":"failed"}, 400
         return {"message": "success"}, 200
 
