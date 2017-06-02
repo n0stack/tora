@@ -39,10 +39,18 @@ class Poolname(Resource):
         poolcreate = Poolop.Create()
 
         if 'pool_path' in args.keys():
-            return poolcreate(pool_name=name, pool_path=args['pool_path'])
+            is_success = poolcreate(pool_name=name, pool_path=args['pool_path'])
+            if is_success is False:
+                return {"message": "failed"}, 400
+            else:
+                return {"message": "successful"}, 201
         else:
-            return poolcreate(pool_name=name)
-
+            is_success = poolcreate(pool_name=name)
+            if is_success is False:
+                return {"message": "failed"}, 400
+            else:
+                return {"message": "successful"}, 201
+            
     def delete(self, name):
         """
         delete pool
@@ -51,5 +59,9 @@ class Poolname(Resource):
         abort_if_poolname_doesnot_exist(name)
 
         pooldelete = Poolop.Delete()
+        is_success = pooldelete(name)
 
-        return pooldelete(name)
+        if is_success is False:
+            return {"message": "failed"}, 400
+        else:
+            return {"message": "successful"}, 201

@@ -15,7 +15,7 @@ class Create(BaseOpen):
             try:
                 os.mkdir(path)
             except PermissionError:
-                return {"message": "Failed."}, 422
+                return False
 
         pool = PoolGen()
         pool(pool_name, path)
@@ -23,9 +23,9 @@ class Create(BaseOpen):
         status = self.connection.storagePoolDefineXML(pool.xml, 0)
 
         if not status:
-            return {"message": "Failed."}, 422
+            return False
         else:
-            return {"message": "Successful."}, 201
+            return True
         
 
 class Delete(BaseOpen):
@@ -37,6 +37,6 @@ class Delete(BaseOpen):
             pool = self.connection.storagePoolLookupByName(name)
             pool.undefine()
         except:
-            return {"message": "Failed."}, 422
+            return False
 
-        return {"message": "Successful."}, 201
+        return True
