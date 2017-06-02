@@ -24,7 +24,10 @@ class Status(BaseOpen):
 
     def start(self, name):
         domain = self.connection.lookupByName(name)
-        domain.create()
+        try:
+            domain.create()
+        except:
+            return {"state": "failed"}, 400
 
         # fail if over 120 seconds
         s = time.time()
