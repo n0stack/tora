@@ -27,7 +27,7 @@ class Status(BaseOpen):
         try:
             domain.create()
         except:
-            return {"state": "failed"}, 400
+            return False
 
         # fail if over 120 seconds
         s = time.time()
@@ -35,9 +35,9 @@ class Status(BaseOpen):
             if domain.info()[0] == 1:
                 break
             if time.time() - s > 120:
-                return {"state": "failed"}, 409
+                return False
 
-        return {"state": "successful"}, 200
+        return True
 
     def stop(self, name):
         domain = self.connection.lookupByName(name)
@@ -49,9 +49,9 @@ class Status(BaseOpen):
             if domain.info()[0] != 1:
                 break
             if time.time() - s > 120:
-                return {"state": "failed"}, 409
+                return False
 
-        return {"state": "successful"}, 200
+        return True
 
     def force_stop(self, name):
         domain = self.connection.lookupByName(name)
@@ -63,9 +63,9 @@ class Status(BaseOpen):
             if domain.info()[0] != 1:
                 break
             if time.time() - s > 60:
-                return {"state": "failed"}, 409
+                return False
 
-        return {"state": "successful"}, 200
+        return True
 
 
 class Create(BaseOpen):

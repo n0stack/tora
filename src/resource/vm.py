@@ -72,7 +72,7 @@ class VMname(Resource):
 
         # manage VM
         try:
-            r_data, status_code = {
+            is_success = {
                 "start": status.start,
                 "stop": status.stop,
                 "force_stop": status.force_stop
@@ -80,7 +80,9 @@ class VMname(Resource):
         except KeyError:
             return {"message": "invalid operation"}, 400
 
-        return r_data, status_code
+        if is_success is True:
+            return {"message": "successful"}, 200
+        return {"message": "failed"}, 409
 
     def delete(self, name):
         """
