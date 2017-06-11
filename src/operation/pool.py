@@ -9,7 +9,7 @@ class Create(BaseOpen):
     def __init__(self):
         super().__init__()
 
-    def __call__(self, pool_name="tora", pool_path="$HOME/pool"):
+    def __call__(self, pool_name, pool_path):
         path = os.path.expandvars(pool_path)
         if not os.path.exists(path):
             try:
@@ -17,10 +17,13 @@ class Create(BaseOpen):
             except PermissionError:
                 return False
 
-        pool = PoolGen()
-        pool(pool_name, path)
+        poolgen = PoolGen()
+        poolgen(pool_name, path)
 
-        status = self.connection.storagePoolDefineXML(pool.xml, 0)
+        status = self.connection.storagePoolDefineXML(poolgen.xml, 0)
+        pool = self.connection.storagePoolLookupByName(pool_name)
+        pool.setAutostart(True)
+        pool.create()
 
         if not status:
             return False
@@ -35,6 +38,10 @@ class Delete(BaseOpen):
     def __call__(self, name):
         try:
             pool = self.connection.storagePoolLookupByName(name)
+            try:
+                pool.destroy()
+            except:
+                pass
             pool.undefine()
         except:
             return False
