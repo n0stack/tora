@@ -5,6 +5,7 @@ import enum
 from kvmconnect.base import BaseOpen
 from operation.xmllib.vm import VmGen
 from operation.xmllib.pool import PoolGen
+from operation.volume import Create as VolCreate
 
 
 class Status(BaseOpen):
@@ -71,16 +72,42 @@ class Status(BaseOpen):
 class Create(BaseOpen):
     """
     Create VM
+
+    parameters:
+        name: VM (domain) name
+        cpu: 
+            arch: cpu architecture
+            nvcpu: number of vcpus
+        memory: memory size of VM
+        disk:
+            pool: pool name where disk is stored
+            size: volume size
+        cdrom: iso image path
+        mac_addr: mac address
+        vnc_password: vnc_password
+
     """
     def __init__(self):
         super().__init__()
 
-    def __call__(self, name, boot, cdrom, memory_size, vcpu_num):
-        vm = VmGen()
-        vm(name, boot, cdrom, memory_size, vcpu_num)
+    def __call__(self, name, cpu, memory, disk, cdrom, mac_addr, vnc_password):
+        vmgen = VmGen()
 
-        dom = self.connection.createXML(vm.xml, 0)
-        dom = self.connection.defineXML(vm.xml)
+        # create volume (disk)
+        volcreate = VolCreate()
+        if not volcreate('tora', disk['pool'], name, disk['size']):
+            return False
+
+        # default values of nic
+        nic = {'type': 'bridge', 'source': 'virbr0', 'mac_addr': mac_addr, 'model': 'virtio'}
+
+        pool = self.connection.storagePoolLookupByName(disk['pool'])
+        vol = pool.storageVolLookupByName(name+'.img')
+
+        vmgen(name, cpu, memory, vol.path(), cdrom, nic, vnc_password)
+
+        dom = self.connection.createXML(vmgen.xml, 0)
+        dom = self.connection.defineXML(vmgen.xml)
         
         if not dom:
             return False
