@@ -38,7 +38,7 @@ class VmGen:
         el_name.text = name
         root.append(el_name)
 
-        el_memroy = Element('memory')
+        el_memory = Element('memory')
         el_memory.text = memory
         root.append(el_memory)
 
