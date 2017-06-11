@@ -34,23 +34,17 @@ class Poolname(Resource):
 
         # set parser
         parser = reqparse.RequestParser()
-        parser.add_argument('pool_path', type=str, location='json', required=False)
+        parser.add_argument('pool_path', type=str, location='json', 
+                required=False, default="$HOME/pool")
 
         args = parser.parse_args()
         poolcreate = Poolop.Create()
 
-        if 'pool_path' in args.keys():
-            result = poolcreate(pool_name=name, pool_path=args['pool_path'])
-            if result is False:
-                return {"message": "failed"}, 400
-            else:
-                return {"message": "successful"}, 201
+        result = poolcreate(name, args['pool_path'])
+        if result is False:
+            return {"message": "failed"}, 400
         else:
-            result = poolcreate(pool_name=name)
-            if result is False:
-                return {"message": "failed"}, 400
-            else:
-                return {"message": "successful"}, 201
+            return {"message": "successful"}, 201
             
     def delete(self, name):
         """
