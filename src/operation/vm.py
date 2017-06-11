@@ -6,6 +6,7 @@ from kvmconnect.base import BaseOpen
 from operation.xmllib.vm import VmGen
 from operation.xmllib.pool import PoolGen
 from operation.volume import Create as VolCreate
+from operation.volume import Delete as VolDelete
 
 
 class Status(BaseOpen):
@@ -124,9 +125,19 @@ class Delete(BaseOpen):
     def __call__(self, name):
         try:
             vdom = self.connection.lookupByName(name)
-            vdom.destroy()
-            vdom.undefine()
-        except:
+            if vdom.isActive(): # vm is up
+                vdom.destroy()
+            else:
+                vdom.undefine()
+
+            # delete matched volume
+            for pool in self.connection.listAllStoragePools():
+                for vol in pool.listAllVolumes():
+                    if vol.name() == name+'.img':
+                        vol.delete()
+                    
+        except libvirt.libvirtError as e:
+            print(e)
             return False
 
         return True
