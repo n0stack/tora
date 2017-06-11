@@ -24,7 +24,13 @@ class TestGetApi(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         assert json.loads(response.text)
 
+    def test_pool_name(self):
+        """
+        will
+        """
+        pass
 
+    
     
 if __name__ == "__main__":
     unittest.main()
