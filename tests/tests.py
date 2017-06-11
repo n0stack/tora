@@ -15,7 +15,7 @@ class TestGetApi(unittest.TestCase):
 
     def test_vm_name(self):
         """
-        will
+        get <vm_name>'s information
         """
         pass
 
@@ -26,11 +26,26 @@ class TestGetApi(unittest.TestCase):
 
     def test_pool_name(self):
         """
-        will
+        get <pool_name>'s information
         """
         pass
 
-    
+
+class TestPostApi(unittest.TestCase):
+    def __init__(self):
+        super().__init__()
+        self.base_url = 'http:__localhost:5000'
+
+    def test_vm(self):
+        """
+        create vm
+        """
+
+    def test_pool(self):
+        """
+        create pool
+        """
+
     
 if __name__ == "__main__":
     unittest.main()
