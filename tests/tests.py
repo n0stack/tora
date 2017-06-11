@@ -4,9 +4,11 @@ import json
 
 
 class TestGetApi(unittest.TestCase):
-    def __init__(self):
-        super().__init__()
+    def setUp(self):
         self.base_url = 'http://localhost:5000'
+
+    def tearDown(self):
+        pass
 
     def test_vm(self):
         response = requests.get(self.base_url+'/vm')
@@ -32,9 +34,11 @@ class TestGetApi(unittest.TestCase):
 
 
 class TestPostApi(unittest.TestCase):
-    def __init__(self):
-        super().__init__()
-        self.base_url = 'http:__localhost:5000'
+    def setUp(self):
+        self.base_url = 'http://localhost:5000'
+
+    def tearDown(self):
+        pass
 
     def test_vm(self):
         """
@@ -46,6 +50,17 @@ class TestPostApi(unittest.TestCase):
         create pool
         """
 
-    
+class TestPutApi(unittest.TestCase):
+    def setUp(self):
+        self.base_url = 'http://localhost:5000'
+
+    def tearDown(self):
+        pass
+
+    def test_vm(self):
+        """
+        change vm's power_status
+        """
+
 if __name__ == "__main__":
     unittest.main()
