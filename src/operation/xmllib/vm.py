@@ -22,7 +22,7 @@ class VmGen:
         nic:
             type: type of NIC
             source: host NIC
-            mac_addr: mac address
+            (mac_addr): mac address
             model: nic mode (ex. virtio, e1000, ...)
         vnc_password: vnc_password
             
@@ -159,10 +159,11 @@ class VmGen:
         # </interface>
         el_interface = Element('interface', attrib={'type': nic['type']})
         el_source = Element('source', attrib={'bridge': nic['source']})
-        el_mac = Element('mac', attrib={'address': nic['mac_addr']})
         el_model = Element('model', attrib={'type': nic['model']})
         el_interface.append(el_source)
-        el_interface.append(el_mac)
+        if nic['mac_addr']:
+            el_mac = Element('mac', attrib={'address': nic['mac_addr']})
+            el_interface.append(el_mac)
         el_interface.append(el_model)
         el_devices.append(el_interface)
 
