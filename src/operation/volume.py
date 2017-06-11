@@ -10,12 +10,12 @@ class Create(BaseOpen):
         super().__init__()
 
     def __call__(self, pool_name, volume_name, size):
-        volume = VolumeGen()
-        volume(volume_name, size)
+        volgen = VolumeGen()
+        volgen(volume_name, size)
 
         try:
             pool = self.connection.storagePoolLookupByName(pool_name)
-            status = pool.createXML(pool.xml)
+            status = pool.createXML(volgen.xml)
         except:
             return False
 
