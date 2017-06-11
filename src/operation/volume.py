@@ -17,12 +17,12 @@ class Create(BaseOpen):
             pool = self.connection.storagePoolLookupByName(pool_name)
             status = pool.createXML(pool.xml)
         except:
-            return {"message": "Failed."}, 422
+            return False
 
         if not status:
-            return {"message": "Failed."}, 422
+            return False
         else:
-            return {"message": "Successful."}, 201
+            return True
         
 
 class Delete(BaseOpen):
@@ -35,6 +35,6 @@ class Delete(BaseOpen):
             storage = pool.storageVolLookupByName(volume_name)
             storage.delete()
         except:
-            return {"message": "Failed."}, 422
+            return False
 
-        return {"message": "Successful."}, 201
+        return True
