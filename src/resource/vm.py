@@ -1,7 +1,7 @@
 # coding:utf-8
 import operation.vm as VMop
 from info.vm import DomainInfo
-from resource.util import abort_if_vmname_doesnot_exist
+from resource.util import abort_if_vmname_doesnot_exist, abort_if_vmname_exists
 
 from flask_restful import Resource, reqparse
 
@@ -34,6 +34,21 @@ class VMname(Resource):
     def post(self, name):
         """
         create vm 
+
+{
+    "cpu": {
+        "arch": "cpu architecutre (ex. x86_64, ...)",
+        "nvcpu": "number of vcpus",
+    },
+    "memory": "memory size of VM",
+    "disk": {
+        "pool": "pool name where disk is stored",
+        "size": "volume size"
+    },
+    "cdrom": "iso image path",
+    "mac_addr": "mac address (automatically generated if not specfied)",
+    "vnc_password": "vnc password (no password if not specified)"
+}
         """
         # check vm name
         abort_if_vmname_exists(name)
@@ -42,14 +57,18 @@ class VMname(Resource):
 
         # set parser
         parser = reqparse.RequestParser()
-        parser.add_argument('name', type=str, location='json', required=True)
-        parser.add_argument('boot', type=str, location='json', required=True)
+        parser.add_argument('cpu', type=dict, location='json', required=True)
+        parser.add_argument('memory', type=str, location='json', required=True)
+        parser.add_argument('disk', type=dict, location='json', required=True)
         parser.add_argument('cdrom', type=str, location='json', required=True)
-        parser.add_argument('memory_size', type=str, location='json', required=True)
-        parser.add_argument('vcpu_num', type=str, location='json', required=True)
+        parser.add_argument('mac_addr', type=str, location='json', 
+                required=False, default=None)
+        parser.add_argument('vnc_password', type=str, location='json', 
+                required=False, default="")
 
         args = parser.parse_args()
-        _args = (args['name'], args['boot'], args['cdrom'], args['memory_size'], args['vcpu_num'])
+        _args = (name, args['cpu'], args['memory'], args['disk'], 
+                args['cdrom'], args['mac_addr'], args['vnc_password'])
 
         vmcreate = VMop.Create()
         result = vmcreate(*_args)

@@ -84,7 +84,7 @@ class Create(BaseOpen):
             size: volume size
         cdrom: iso image path
         mac_addr: mac address
-        vnc_password: vnc_password
+        vnc_password: vnc password
 
     """
     def __init__(self):
@@ -95,7 +95,7 @@ class Create(BaseOpen):
 
         # create volume (disk)
         volcreate = VolCreate()
-        if not volcreate('tora', disk['pool'], name, disk['size']):
+        if not volcreate(disk['pool'], name, disk['size']):
             return False
 
         # default values of nic
@@ -107,7 +107,6 @@ class Create(BaseOpen):
         vmgen(name, cpu, memory, vol.path(), cdrom, nic, vnc_password)
 
         dom = self.connection.createXML(vmgen.xml, 0)
-        dom = self.connection.defineXML(vmgen.xml)
         
         if not dom:
             return False
