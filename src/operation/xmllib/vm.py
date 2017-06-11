@@ -10,209 +10,173 @@ from kvmconnect.base import BaseOpen
 class VmGen:
     """
     Create VM
+
+    parameters:
+        name: VM (domain) name
+        cpu:
+            arch: cpu architecture
+            nvcpu: number of vcpus
+        memory: memory size of VM
+        disk: storage path
+        cdrom: iso image path
+        nic:
+            type: type of NIC
+            source: host NIC
+            mac_addr: mac address
+            model: nic mode (ex. virtio, e1000, ...)
+        vnc_password: vnc_password
+            
     """
 
     def __init__(self):
         pass
 
-    def __call__(self, name, boot, cdrom, memory_size, vcpu_num):
-        self.vm_name = name
-        self.boot = boot
-        self.cdrom = cdrom
-        self.memory_size = memory_size
-        self.vcpu_num = vcpu_num
+    def __call__(self, name, cpu, memory, disk, cdrom, nic, vnc_password):
+        root = Element('domain', attrib={'type': 'kvm'})
 
-        # domain tag
-        domain = Element('domain', attrib={'type': 'qemu'})
+        el_name = Element('name')
+        el_name.text = name
+        root.append(el_name)
 
-        # name tag
-        name = Element('name')
-        name.text = self.vm_name
+        el_memroy = Element('memory')
+        el_memory.text = memory
+        root.append(el_memory)
 
-        # uuid tag
-        uuid = Element('uuid')
-        uuid.text = uuid.uuid4()
+        el_vcpu = Element('vcpu')
+        el_vcpu.text = cpu['nvcpu']
+        root.append(el_vcpu)
 
-        # description tag
-        description = Element('description')
-        description.text = "test description"
+		# <os>
+		# 	<type arch="${arch}">hvm</type>
+		# 	<boot dev="cdrom"/>
+		# 	<boot dev="hd"/>
+		# </os>
+        el_os = Element('os')
+		el_type = Element('type', attrib={'arch': cpu['arch']})
+        el_type.text = "hvm"
+        el_boot1 = Element('boot', attrib={'dev': 'cdrom'})
+        el_boot2 = Element('boot', attrib={'dev': 'hd'})
+        el_os.append(el_type)
+        el_os.append(el_boot1)
+        el_os.append(el_boot2)
+        root.append(el_os)
 
-        # memory tag
-        memory = Element('memory', attrib={'unit': 'KiB'})
-        memory.text = str(self.memory_size)
+        # <features>
+        # <acpi/>
+        # <apic/>
+        # </features>
+        el_features = Element('features')
+        el_acpi = Element('acpi')
+        el_apic = Element('apic')
+        el_features.append(el_acpi)
+        el_features.append(el_apic)
+        root.append(el_features)
 
-        # current memory tag
-        currentMemory = Element('currentMemory', attrib={'unit': 'KiB'})
-        currentMemory.text = str(self.memory_size)
+        # <cpu mode="custom" match="exact">
+        #   <model>IvyBridge</model>
+        # </cpu>
+        el_cpu = Element('cpu', attrib={'mode': 'custom', 'match': 'exact'})
+        el_model = Element('model')
+        el_cpu.append(el_model)
+        root.append(el_cpu)
 
-        # vcpu tag
-        vcpu = Element('vcpu', attrib={'placement': 'static'})
-        vcpu.text = str(self.vcpu_num)
+        # <clock offset="utc">
+        #   <timer name="rtc" tickpolicy="catchup"/>
+        #   <timer name="pit" tickpolicy="delay"/>
+        #   <timer name="hpet" present="no"/>
+        # </clock>
+        el_clock = Element('clock', attrib={'offset': 'utc'})
+        el_timer1 = Element('timer', attrib={'name': 'rtc', 'tickpolicy': 'catchup'})
+        el_timer2 = Element('timer', attrib={'name': 'pit', 'tickpolicy': 'delay'})
+        el_timer3 = Element('timer', attrib={'name': 'hpet', 'present': 'no'})
+        el_clock.append(el_timer1)
+        el_clock.append(el_timer2)
+        el_clock.append(el_timer3)
+        root.append(el_clock)
 
-        # os tag
-        self.create_os_tag()
+        # <on_poweroff>destroy</on_poweroff>
+        # <on_reboot>restart</on_reboot>
+        # <on_crash>restart</on_crash>
+        el_on1 = Element('on_poweroff')
+        el_on1.text = 'destroy'
+        el_on2 = Element('on_reboot')
+        el_on2.text = 'restart'
+        el_on3 = Element('on_crash')
+        el_on3.text = 'restart'
+        root.append(el_on1)
+        root.append(el_on2)
+        root.append(el_on3)
 
-        # devices tag
-        self.create_devices_tag()
+        # <pm>
+        #   <suspend-to-mem enabled="no"/>
+        #   <suspend-to-disk enabled="no"/>
+        # </pm>
+        el_pm = Element('pm')
+        el_suspend1 = Element('suspend-to-mem', attrib={'enabled': 'no'})
+        el_suspend2 = Element('suspend-to-disk', attrib={'enabled': 'no'})
+        el_pm.append(el_suspend1)
+        el_pm.append(el_suspend2)
+        root.append(el_pm)
 
-        # Create XML file and append some tags
-        domain.append(name)
-        domain.append(uuid)
-        domain.append(description)
-        domain.append(memory)
-        domain.append(currentMemory)
-        domain.append(vcpu)
-        domain.append(self.os)
-        domain.append(self.devices)
+        # devices
+        el_devices = Element('devices')
 
-        self.xml = ET.tostring(domain).decode('utf-8').replace('\n', '')
+        # <disk type="file" device="disk">
+        #   <driver name="qemu" type="raw"/>
+        #   <source file="${disk}"/>
+        #   <target dev="vda" bus="virtio"/>
+        # </disk>
+        el_disk = Element('disk', attrib={'type': 'file', 'device': 'disk'})
+        el_driver = Element('driver', attrib={'name': 'qemu', 'type': 'raw'})
+        el_source = Element('source', attrib={'file': disk})
+        el_target = Element('target', attrib={'dev': 'vda', 'bus': 'virtio'})
+        el_disk.append(el_driver)
+        el_disk.append(el_source)
+        el_disk.append(el_target)
+        el_devices.append(el_disk)
 
-    def create_os_tag(self):
-        self.os = Element('os')
+        # <disk type="file" device="cdrom">
+        #   <driver name="qemu" type="raw"/>
+        #   <source file="${cdrom}"/>
+        #   <target dev="hda" bus="ide"/>
+        #   <readonly/>
+        # </disk>
+        el_disk = Element('disk', attrib={'type': 'file', 'device': 'cdrom'})
+        el_driver = Element('driver', attrib={'name': 'qemu', 'type': 'raw'})
+        el_source = Element('source', attrib={'file': cdrom})
+        el_target = Element('target', attrib={'dev': 'hda', 'bus': 'ide'})
+        el_readonly = Element('readonly')
+        el_disk.append(el_driver)
+        el_disk.append(el_source)
+        el_disk.append(el_target)
+        el_disk.append(el_readonly)
+        el_devices.append(el_disk)
 
-        # Decide arch
-        type = Element('type', attrib={'arch': 'x86_64'})
-        type.text = 'hvm'
+        # <interface type="${type}">
+        #   <source bridge="${source}"/>
+        #   <mac address="${mac_addr}"/>
+        #   <model type="${model}"/>
+        # </interface>
+        el_interface = Element('interface', attrib={'type': nic['type']})
+        el_source = Element('source', attrib={'bridge': nic['source']})
+        el_mac = Element('mac', attrib={'address': nic['mac_addr']})
+        el_model = Element('model', attrib={'type': nic['model']})
+        el_interface.append(el_source)
+        el_interface.append(el_mac)
+        el_interface.append(el_model)
+        el_devices.append(el_interface)
 
-        boot1 = Element('boot', attrib={'dev': 'cdrom'})
-        boot2 = Element('boot', attrib={'dev': 'hd'})
+        # <input type="mouse" bus="ps2"/>
+        el_input = Element('input', attrib={'type': 'mouse', 'bus': 'ps2'})
+        el_devices.append(el_input)
+        # <graphics type="vnc" port="-1" listen="0.0.0.0" passwd="${vnc_password}"/>
+        el_graphics = Element('graphics' attirb={'type': 'vnc', 'port': '-1', 
+                'listen': '0.0.0.0', 'passwd': vnc_password})
+        el_devices.append(el_graphics)
+        # <console type="pty"/>
+        el_console = Element('console', attrib={'type': 'pty'})
+        el_devices.append(el_console)
 
-        self.os.append(type)
-        self.os.append(boot1)
-        self.os.append(boot2)
+        root.append(el_devices)
 
-    def create_devices_tag(self):
-        self.devices = Element('devices')
-
-        # emulator tag
-        self.emulator = Element('emulator')
-        self.emulator.text = "/usr/bin/qemu-system-x86_64"
-
-        # disk1 tag
-        self.create_qcow2_tag()
-
-        # disk2 tag(cdrom)
-        self.create_iso_tag()
-
-        # controller1 tag
-        self.controller1 = Element('controller', attrib={'type': 'usb',
-                                                    'index': '0',
-                                                    'model': 'ich9-ehci1'})
-        address = Element('address', attrib={'type': 'pci',
-                                             'domain': '0x0000',
-                                             'bus': '0x00',
-                                             'slot': '0x05',
-                                             'function': '0x7'})
-        self.controller1.append(address)
-
-        # controller2 tag
-        self.controller2 = Element('controller', attrib={'type': 'usb',
-                                                    'index': '0',
-                                                    'model': 'ich9-uhci1'})
-        master = Element('master', attrib={'startport': '0'})
-        address = Element('address', attrib={'type': 'pci',
-                                             'domain': '0x0000',
-                                             'bus': '0x00',
-                                             'slot': '0x05',
-                                             'function': '0x0',
-                                             'multifunction': 'on'})
-        self.controller2.append(master)
-        self.controller2.append(address)
-
-        # interface1 tag
-        self.interface1 = Element('interface', attrib={'type': 'bridge'})
-        mac = Element('mac', attrib={'address': '52:54:00:43:e0:a0'})
-        source = Element('source', attrib={'bridge': 'br0'})
-        model = Element('model', attrib={'type': 'virtio'})
-        address = Element('address', attrib={'type': 'pci',
-                                             'domain': '0x0000',
-                                             'bus': '0x00',
-                                             'slot': '0x02',
-                                             'function': '0x0'})
-        self.interface1.append(mac)
-        self.interface1.append(source)
-        self.interface1.append(model)
-        self.interface1.append(address)
-
-        # serial tag
-        self.serial = Element('serial', attrib={'type': 'pty'})
-        target = Element('target', attrib={'port': '0'})
-        self.serial.append(target)
-
-        # console tag
-        self.console = Element('console', attrib={'type': 'pty'})
-        target = Element('target', attrib={'type': 'serial',
-                                           'port': '0'})
-        self.console.append(target)
-
-        # channel tag
-        self.channel = Element('channel', attrib={'type': 'unix'})
-        source = Element('source', attrib={'mode': 'bind'})
-        target = Element('target', attrib={'type': 'virtio',
-                                           'name': 'org.qemu.guest_agent.0'})
-        address = Element('address', attrib={'type': 'virtio-serial',
-                                             'controller': '0',
-                                             'bus': '0',
-                                             'port': '1'})
-        self.channel.append(source)
-        self.channel.append(target)
-        self.channel.append(address)
-
-        # input tag
-        self.input = Element('input', attrib={'type': 'tablet',
-                                         'bus': 'usb'})
-
-        # memballoon tag
-        self.memballoon = Element('memballoon', attrib={'model': 'virtio'})
-        address = Element('address', attrib={'type': 'pci',
-                                             'domain': '0x0000',
-                                             'bus': '0x00',
-                                             'slot': '0x07',
-                                             'function': '0x0'})
-        self.memballoon.append(address)
-
-
-        self.devices.append(self.emulator)
-        self.devices.append(self.disk1)
-        self.devices.append(self.disk2)
-        self.devices.append(self.controller1)
-        self.devices.append(self.controller2)
-        self.devices.append(self.interface1)
-        self.devices.append(self.serial)
-        self.devices.append(self.console)
-        self.devices.append(self.channel)
-        self.devices.append(self.input)
-        self.devices.append(self.memballoon)
-
-    def create_qcow2_tag(self):
-        self.disk1 = Element('disk', attrib={'type': 'file', 'device': 'disk'})
-        driver = Element('driver', attrib={'name': 'qemu', 'type': 'qcow2'})
-        source = Element('source', attrib={'file': self.boot})
-        target = Element('target', attrib={'dev': 'vda', 'bus': 'virtio'})
-        address = Element('address', attrib={'type': 'pci',
-                                             'domain': '0x0000',
-                                             'bus': '0x00',
-                                             'slot': '0x06',
-                                             'function': '0x0'})
-        self.disk1.append(driver)
-        self.disk1.append(source)
-        self.disk1.append(target)
-        self.disk1.append(address)
-
-    def create_iso_tag(self):
-        self.disk2 = Element('disk', attrib={'type': 'file', 'device': 'cdrom'})
-        driver = Element('driver', attrib={'name':'qemu', 'type': 'raw'})
-        source = Element('source', attrib={'file': self.cdrom})
-        target = Element('target', attrib={'bus': 'ide', 'dev': 'hdb'})
-        read_only = Element('readonly')
-        address = Element('address', attrib={'bus': '0',
-                                             'controller': '0',
-                                             'target': '0',
-                                             'type': 'drive',
-                                             'unit': '1'})
-        self.disk2.append(driver)
-        self.disk2.append(source)
-        self.disk2.append(target)
-        self.disk2.append(read_only)
-        self.disk2.append(address)
-
+        self.xml = ET.tostring(root).decode('utf-8').replace('\n', '')
