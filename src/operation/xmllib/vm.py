@@ -52,7 +52,7 @@ class VmGen:
 		# 	<boot dev="hd"/>
 		# </os>
         el_os = Element('os')
-		el_type = Element('type', attrib={'arch': cpu['arch']})
+        el_type = Element('type', attrib={'arch': cpu['arch']})
         el_type.text = "hvm"
         el_boot1 = Element('boot', attrib={'dev': 'cdrom'})
         el_boot2 = Element('boot', attrib={'dev': 'hd'})
@@ -171,7 +171,7 @@ class VmGen:
         el_input = Element('input', attrib={'type': 'mouse', 'bus': 'ps2'})
         el_devices.append(el_input)
         # <graphics type="vnc" port="-1" listen="0.0.0.0" passwd="${vnc_password}"/>
-        el_graphics = Element('graphics' attirb={'type': 'vnc', 'port': '-1', 
+        el_graphics = Element('graphics', attrib={'type': 'vnc', 'port': '-1', 
                 'listen': '0.0.0.0', 'passwd': vnc_password})
         el_devices.append(el_graphics)
         # <console type="pty"/>
