@@ -123,6 +123,11 @@ class VMname(Resource):
 class VMclone(Resource):
     """
     clone VM
+
+{
+    "src": "src vm name",
+    "vnc_password": "vnc passoword of new vm"
+}
     """
     def post(self, name):
         # check vm name
