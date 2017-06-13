@@ -126,15 +126,17 @@ class Delete(BaseOpen):
         try:
             vdom = self.connection.lookupByName(name)
             if vdom.isActive(): # vm is up
+                vdom.shutdown()
+
+            # delete matched volume
+            vol = self.volumeLookupByName(name)
+            vol.wipe(0)
+            vol.delete(0)
+
+            if vdom.isActive():
                 vdom.destroy()
             else:
                 vdom.undefine()
-
-            # delete matched volume
-            for pool in self.connection.listAllStoragePools():
-                for vol in pool.listAllVolumes():
-                    if vol.name() == name+'.img':
-                        vol.delete()
                     
         except libvirt.libvirtError as e:
             print(e)
@@ -143,3 +145,21 @@ class Delete(BaseOpen):
         return True
 
 
+class Clone(BaseOpen):
+    """
+    Clone VM
+
+    parameters:
+        src: original vm name
+        dst: new vm name
+    """
+    def __init__(self):
+        super().__init__()
+
+    def __call__(self, src, dst):
+        srcdom = self.connection.lookupByName(src)
+        if srcdom.isActive(): # if vm is up
+            # TODO: save state or something
+            return False
+
+        srcvol = volumeLookupByName(src)
