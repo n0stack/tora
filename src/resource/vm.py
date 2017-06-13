@@ -131,15 +131,18 @@ class VMclone(Resource):
         # set parser
         parser = reqparse.RequestParser()
         parser.add_argument('src', type=str, location='json', required=True)
+        parser.add_argument('vnc_password', type=str, location='json', 
+                required=False, default='')
 
         args = parser.parse_args()
         src = args['src']
+        vncpass = args['vnc_password']
 
         # check vm name
         abort_if_vmname_doesnot_exist(src)
 
         vmclone = VMop.Clone()
-        result = vmclone(src, name)
+        result = vmclone(src, name, vncpass)
 
         if result is False:
             return {'message': 'failed'}, 400
