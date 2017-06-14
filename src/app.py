@@ -10,7 +10,7 @@ api = Api(app)
 
 api.add_resource(VMres.VM, '/vm')
 api.add_resource(VMres.VMname, '/vm/<string:name>')
-api.add_resource(VMres.VMclone, '/vm/clone/<string:name>')
+api.add_resource(VMres.VMclone, '/vm/<string:name>/clone')
 api.add_resource(Poolres.Pool, '/pool')
 api.add_resource(Poolres.Poolname, '/pool/<string:name>')
 
