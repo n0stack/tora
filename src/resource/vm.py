@@ -125,30 +125,30 @@ class VMclone(Resource):
     clone VM
 
 {
-    "src": "src vm name",
+    "name": "new vm name",
     "vnc_password": "vnc passoword of new vm"
 }
     """
     def post(self, name):
         # check vm name
-        abort_if_vmname_exists(name)
+        abort_if_vmname_doesnot_exist(name)
 
         # set parser
         parser = reqparse.RequestParser()
-        parser.add_argument('src', type=str, location='json', required=True)
+        parser.add_argument('name', type=str, location='json', required=True)
         parser.add_argument('vnc_password', type=str, location='json', 
                 required=False, default='')
 
         args = parser.parse_args()
-        src = args['src']
+        dst = args['name']
         vncpass = args['vnc_password']
 
         # check vm name
-        abort_if_vmname_doesnot_exist(src)
+        abort_if_vmname_exists(dst)
 
         vmclone = VMop.Clone()
-        result = vmclone(src, name, vncpass)
+        result = vmclone(name, dst, vncpass)
 
         if result is False:
             return {'message': 'failed'}, 400
-        return {'message': 'successful'}, 200
+        return {'message': 'successful'}, 201, {'Location': '/vm/{}'.format(dst)}
