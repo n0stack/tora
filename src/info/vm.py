@@ -88,6 +88,7 @@ class DomainInfo(BaseReadOnly):
         domain = self.connection.lookupByName(name)
         return minidom.parseString(domain.XMLDesc(0))
 
+    # Domain list
     def get_domain_list(self):
         # Get stopped domain list
         domain_list = self.connection.listDefinedDomains()
@@ -118,8 +119,16 @@ class DomainInfo(BaseReadOnly):
 
             # Read XML file
             domain_XML = self.get_domain_XML(name)
-            networks = []
-            # Show interface's information
+
+            vnc_ports = []
+            # Get vnc ports
+            for port in domain_XML.getElementsByTagName("graphics"):
+                if port.getAttribute("type") == "vnc":
+                    vnc_ports.append(port.getAttribute("port"))
+            dom_info.update({"vncports": vnc_ports})
+
+            networks = []            
+            # Get interface's information
             for iface in domain_XML.getElementsByTagName("interface"):
                 networks.append(self.get_domain_network_info(iface))
             dom_info.update({"networks": networks})
@@ -127,7 +136,7 @@ class DomainInfo(BaseReadOnly):
 
         return {"interfaces": domain}
 
-    # One information
+    # <name>'s information
     def get_domain_info(self, name):
         dom_info = {"name": name}
         dom_info.update(self.get_domain(name))
@@ -138,8 +147,17 @@ class DomainInfo(BaseReadOnly):
         
         # Read XML file
         domain_XML = self.get_domain_XML(name)
+        print(domain_XML.getElementsByTagName("graphics")[0].getAttribute("port"))
+
+        # Get vnc ports
+        vnc_ports = []
+        for port in domain_XML.getElementsByTagName("graphics"):
+            if port.getAttribute("type") == "vnc":
+                vnc_ports.append(port.getAttribute("port"))
+        dom_info.update({"vncports": vnc_ports})
+                
+        # Get interface's information
         networks = []
-        # Show interface's information
         for iface in domain_XML.getElementsByTagName("interface"):
             networks.append(self.get_domain_network_info(iface))
         dom_info.update({"networks": networks})
@@ -156,6 +174,7 @@ class DomainInfo(BaseReadOnly):
 
         return network_info
 
+    # check vm's existance
     def vmname_exists(self, name):
         try:
             self.connection.lookupByName(name)
