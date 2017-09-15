@@ -20,7 +20,8 @@ class DomainInfo(BaseReadOnly):
         iface_type = iface.getAttribute("type")
 
         if iface_type == "network":
-            XML_temp = Conn.networkLookupByName(network_info).XMLDesc(0)
+            network_info = iface.getElementsByTagName("source")[0].getAttribute("network")
+            XML_temp = self.connection.networkLookupByName(network_info).XMLDesc(0)
             net_XML_info = minidom.parseString(XML_temp)
             bridge = net_XML_info.getElementsByTagName("bridge")[0].getAttribute("name")
 
